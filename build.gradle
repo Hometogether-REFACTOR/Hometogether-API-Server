@@ -19,19 +19,18 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	runtimeOnly 'com.h2database:h2'
+//	implementation 'mysql:mysql-connector-java'
 
 	implementation 'io.jsonwebtoken:jjwt:0.9.0'
-	implementation 'mysql:mysql-connector-java'
 	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'io.jsonwebtoken:jjwt:0.9.0'
-	implementation 'mysql:mysql-connector-java'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 
 	implementation 'javax.servlet:jstl'
@@ -39,9 +38,6 @@ dependencies {
 	implementation 'commons-io:commons-io:2.6'
 	compileOnly "com.fasterxml.jackson.core:jackson-databind:2.9.4"
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
 
 	implementation 'org.webjars:sockjs-client:1.5.1'
 	implementation 'org.webjars:stomp-websocket:2.3.3'
@@ -53,11 +49,9 @@ dependencies {
 	implementation 'org.jcodec:jcodec:0.2.3'
 	implementation 'org.jcodec:jcodec-javase:0.2.3'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 //	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
