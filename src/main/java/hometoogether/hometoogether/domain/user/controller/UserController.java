@@ -20,7 +20,7 @@ import java.net.URI;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
