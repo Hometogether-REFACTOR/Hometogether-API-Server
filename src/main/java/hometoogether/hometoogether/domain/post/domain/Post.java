@@ -1,16 +1,22 @@
 package hometoogether.hometoogether.domain.post.domain;
 
+import hometoogether.hometoogether.domain.pose.Pose;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.entity.comment.CommentEntity;
 import hometoogether.hometoogether.entity.heart.HeartEntity;
-import hometoogether.hometoogether.entity.pose.Pose;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+@Getter
+@Builder
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
+@Entity
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,4 +37,8 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private List<HeartEntity> heartList;
+
+    public void changeUser(User user) {
+        this.user = user;
+    }
 }

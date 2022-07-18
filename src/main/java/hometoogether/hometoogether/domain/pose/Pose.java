@@ -1,15 +1,20 @@
 package hometoogether.hometoogether.domain.pose;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+@Builder
+@NoArgsConstructor
 @Embeddable
 public class Pose {
     @Enumerated(value = EnumType.STRING)
     private PoseType poseType;
 
-    private String mediaUrl;
+    private String originalUrl;
 
     private String thumbnailUrl;
 

@@ -29,4 +29,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<HeartEntity> heartList;
+
+    public void addPost(Post post) {
+        post.changeUser(this);
+        this.postList.add(post);
+    }
 }
