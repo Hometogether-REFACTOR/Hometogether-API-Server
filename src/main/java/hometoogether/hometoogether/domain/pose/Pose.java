@@ -1,12 +1,14 @@
 package hometoogether.hometoogether.domain.pose;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+@Getter
 @Builder
 @NoArgsConstructor
 @Embeddable
