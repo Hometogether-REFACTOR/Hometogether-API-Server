@@ -1,4 +1,4 @@
-package hometoogether.hometoogether.entity.pose;
+package hometoogether.hometoogether.domain.pose;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -15,5 +15,5 @@ public class Pose {
 
     private String job_id;
 
-    private String keypoints;
+    private String keyPoints;
 }
