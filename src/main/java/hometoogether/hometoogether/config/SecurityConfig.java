@@ -24,65 +24,65 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
-@Configuration
+//@Configuration
 //@EnableWebSecurity
 //@EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtAuthenticationEntryPoint unauthorizedHandler;
-    private final CustomUserDetailsService customUserDetailsService;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-//        authenticationManagerBuilder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
-        authenticationManagerBuilder.userDetailsService(customUserDetailsService);
-    }
-
-    @Bean(BeanIds.AUTHENTICATION_MANAGER)
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // For CORS error
-//        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
-//        http.authorizeRequests().requestMatchers(CorsUtils::isPreFlightRequest).permitAll();
-//        http.csrf().disable()
-//                // dont authenticate this particular request
-//                .authorizeRequests().antMatchers("*").permitAll().
-////        "/api/users/login", "/api/users/signup", "/api/users/find/password",
-////                "/api/users/find/userName/**", "/api/forums/count/**", "/api/forums/**",
-////                "/routine/**", "/rooms", "/routines", "/routine", "/myRoutines/**",
-////                "/room/**", "/start", "/ws-stomp/**", "/api/challenges/**", "/api/trials/**", "/demo/similarity",
-//                // all other requests need to be authenticated
-//                        anyRequest().authenticated().and().
-//                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        // Add our custom JWT security filter
-//         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        // - (3)
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+//    private final CustomUserDetailsService customUserDetailsService;
+//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+//
+//
+//    @Override
+//    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+////        authenticationManagerBuilder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
+//        authenticationManagerBuilder.userDetailsService(customUserDetailsService);
+//    }
+//
+//    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+//    @Override
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        // For CORS error
+////        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+////        http.authorizeRequests().requestMatchers(CorsUtils::isPreFlightRequest).permitAll();
+////        http.csrf().disable()
+////                // dont authenticate this particular request
+////                .authorizeRequests().antMatchers("*").permitAll().
+//////        "/api/users/login", "/api/users/signup", "/api/users/find/password",
+//////                "/api/users/find/userName/**", "/api/forums/count/**", "/api/forums/**",
+//////                "/routine/**", "/rooms", "/routines", "/routine", "/myRoutines/**",
+//////                "/room/**", "/start", "/ws-stomp/**", "/api/challenges/**", "/api/trials/**", "/demo/similarity",
+////                // all other requests need to be authenticated
+////                        anyRequest().authenticated().and().
+////                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//        // Add our custom JWT security filter
+////         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//    }
+//
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        // - (3)
+//        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.setAllowCredentials(true);
+//        configuration.setMaxAge(3600L);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
 }

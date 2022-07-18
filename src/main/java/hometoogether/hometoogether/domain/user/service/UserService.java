@@ -22,22 +22,23 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final ForumService forumService;
     private final CommentService commentService;
 
     public String signIn(LoginRequest loginRequest) throws Exception {
         Authentication authentication;
-        try {
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        } catch (Exception e) {
-            throw new Exception("inavalid username/password");
-        }
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return tokenProvider.generateToken(authentication);
+//        try {
+//            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+//        } catch (Exception e) {
+//            throw new Exception("inavalid username/password");
+//        }
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        return tokenProvider.generateToken(authentication);
+        return null;
     }
 
     @Transactional
@@ -49,7 +50,7 @@ public class UserService {
         }
 
         // Creating user's account
-        signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+//        signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         User user = signUpRequest.toEntity();
 //        user.setPassword(passwordEncoder.encode(user.getPassword()));
 //        Role userRole = roleRepository.findByName(RoleName.ROLE_USER) .orElseThrow(() -> new AppException("User Role not set."));
@@ -78,7 +79,7 @@ public class UserService {
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
 
-        user.update(passwordEncoder.encode(generatedString));
+//        user.update(passwordEncoder.encode(generatedString));
         return generatedString;
     }
 
