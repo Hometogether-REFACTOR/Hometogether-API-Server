@@ -32,18 +32,20 @@ import java.util.UUID;
 @Service
 public class TrialService {
 
+    private final FileService fileService;
+    private final PoseService poseService;
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
     private final TrialRepository trialRepository;
-    private final PoseService poseService;
 
     @Transactional
     public Long createTrial(CreateTrialReq createTrialReq) throws IOException {
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException(""));
         Post challenge = postRepository.findById(createTrialReq.getChallengeId()).orElseThrow(() -> new RuntimeException(""));
 
-        String url = createFileURL(createTrialReq.getFile());
+        String url = fileService.createFileURL(createTrialReq.getFile());
         // TODO: 썸네일 생성 후 URL 반환, Pose에 저장
 
         Pose pose = Pose.builder()
@@ -64,21 +66,6 @@ public class TrialService {
 //        poseService.estimatePose(pose);
 
         return postRepository.save(post).getId();
-    }
-
-    private String createFileURL(MultipartFile multipartFile) throws IOException {
-        String url = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
-        File file = new File(url);
-        multipartFile.transferTo(file);
-        return url;
-    }
-
-    public String createThumbnail(File source) throws IOException, JCodecException {
-        String url = UUID.randomUUID().toString();
-        Picture picture = FrameGrab.getFrameFromFile(source, 0);
-        BufferedImage bufferedImage = AWTUtil.toBufferedImage(picture);
-        ImageIO.write(bufferedImage, "jpg", new File(url));
-        return url;
     }
 
     @Transactional(readOnly=true)

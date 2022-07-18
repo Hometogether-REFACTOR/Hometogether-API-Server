@@ -32,9 +32,11 @@ import java.util.UUID;
 @Service
 public class ChallengeService {
 
+    private final FileService fileService;
+    private final PoseService poseService;
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final PoseService poseService;
 
     @Value("${spring.servlet.multipart.location}")
     String videoPath;
@@ -43,7 +45,7 @@ public class ChallengeService {
     public Long createChallenge(CreateChallengeReq createChallengeReq) throws IOException {
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException(""));
 
-        String url = createFileURL(createChallengeReq.getFile());
+        String url = fileService.createFileURL(createChallengeReq.getFile());
         // TODO: 썸네일 생성 후 URL 반환, Pose에 저장
 
         Pose pose = Pose.builder()
@@ -64,21 +66,6 @@ public class ChallengeService {
 //        poseService.estimatePose(pose);
 
         return postRepository.save(post).getId();
-    }
-
-    private String createFileURL(MultipartFile multipartFile) throws IOException {
-        String url = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
-        File file = new File(url);
-        multipartFile.transferTo(file);
-        return url;
-    }
-
-    private String createThumbnail(File source) throws IOException, JCodecException {
-        String url = UUID.randomUUID().toString();
-        Picture picture = FrameGrab.getFrameFromFile(source, 0);
-        BufferedImage bufferedImage = AWTUtil.toBufferedImage(picture);
-        ImageIO.write(bufferedImage, "jpg", new File(url));
-        return url;
     }
 
     @Transactional(readOnly=true)
