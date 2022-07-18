@@ -1,4 +1,4 @@
-package hometoogether.hometoogether.domain.post.dto;
+package hometoogether.hometoogether.domain.post.dto.challenge;
 
 import hometoogether.hometoogether.domain.pose.PoseType;
 import lombok.Data;

@@ -1,9 +1,9 @@
 package hometoogether.hometoogether.domain.post.controller;
 
-import hometoogether.hometoogether.domain.post.dto.ReadChallengeRes;
-import hometoogether.hometoogether.domain.post.dto.CreateChallengeReq;
-import hometoogether.hometoogether.domain.post.dto.PreviewChallengeRes;
-import hometoogether.hometoogether.domain.post.dto.UpdateChallengeReq;
+import hometoogether.hometoogether.domain.post.dto.challenge.ReadChallengeRes;
+import hometoogether.hometoogether.domain.post.dto.challenge.CreateChallengeReq;
+import hometoogether.hometoogether.domain.post.dto.challenge.PreviewChallengeRes;
+import hometoogether.hometoogether.domain.post.dto.challenge.UpdateChallengeReq;
 import hometoogether.hometoogether.domain.post.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

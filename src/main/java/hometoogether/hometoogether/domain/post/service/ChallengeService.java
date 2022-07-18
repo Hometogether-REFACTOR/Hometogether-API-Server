@@ -2,10 +2,10 @@ package hometoogether.hometoogether.domain.post.service;
 
 import hometoogether.hometoogether.domain.pose.Pose;
 import hometoogether.hometoogether.domain.post.domain.Post;
-import hometoogether.hometoogether.domain.post.dto.ReadChallengeRes;
-import hometoogether.hometoogether.domain.post.dto.CreateChallengeReq;
-import hometoogether.hometoogether.domain.post.dto.PreviewChallengeRes;
-import hometoogether.hometoogether.domain.post.dto.UpdateChallengeReq;
+import hometoogether.hometoogether.domain.post.dto.challenge.ReadChallengeRes;
+import hometoogether.hometoogether.domain.post.dto.challenge.CreateChallengeReq;
+import hometoogether.hometoogether.domain.post.dto.challenge.PreviewChallengeRes;
+import hometoogether.hometoogether.domain.post.dto.challenge.UpdateChallengeReq;
 import hometoogether.hometoogether.domain.pose.service.PoseService;
 import hometoogether.hometoogether.domain.post.repository.PostRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
