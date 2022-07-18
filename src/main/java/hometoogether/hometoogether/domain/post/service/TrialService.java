@@ -8,25 +8,15 @@ import hometoogether.hometoogether.domain.pose.service.PoseService;
 import hometoogether.hometoogether.domain.post.dto.trial.CreateTrialReq;
 import hometoogether.hometoogether.domain.post.dto.trial.PreviewTrialRes;
 import hometoogether.hometoogether.domain.post.repository.PostRepository;
-import hometoogether.hometoogether.domain.post.repository.TrialRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jcodec.api.FrameGrab;
-import org.jcodec.api.JCodecException;
-import org.jcodec.common.model.Picture;
-import org.jcodec.scale.AWTUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -37,8 +27,6 @@ public class TrialService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-
-    private final TrialRepository trialRepository;
 
     @Transactional
     public Long createTrial(CreateTrialReq createTrialReq) throws IOException {
