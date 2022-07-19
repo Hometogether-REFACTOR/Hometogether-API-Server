@@ -1,6 +1,6 @@
-package hometoogether.hometoogether.domain.trial.service;
+package hometoogether.hometoogether.domain.post.service;
 
-import hometoogether.hometoogether.domain.trial.domain.Trial;
+import hometoogether.hometoogether.domain.post.domain.Trial;
 
 import java.util.Comparator;
 
