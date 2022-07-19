@@ -1,6 +1,6 @@
 package hometoogether.hometoogether.domain.post.domain;
 
-import hometoogether.hometoogether.domain.pose.Pose;
+import hometoogether.hometoogether.domain.pose.domain.Pose;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.entity.comment.CommentEntity;
 import hometoogether.hometoogether.entity.heart.HeartEntity;
