@@ -1,5 +1,6 @@
 package hometoogether.hometoogether.domain.pose.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import javax.persistence.Enumerated;
 
 @Getter
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
 public class Pose {
