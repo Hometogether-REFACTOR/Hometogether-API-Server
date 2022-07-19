@@ -1,22 +1,37 @@
 package hometoogether.hometoogether.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.FieldError;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
+@Builder
+@RequiredArgsConstructor
 public class ErrorResponse {
-    private final LocalDateTime timestamp = LocalDateTime.now();
-    private final int status;
-    private final String error;
+
     private final String code;
     private final String message;
 
-    public ErrorResponse(ErrorCode errorCode) {
-        this.status = errorCode.getStatus().value();
-        this.error = errorCode.getStatus().name();
-        this.code = errorCode.name();
-        this.message = errorCode.getMessage();
-    }
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private final List<ValidationError> errors;
 
+    @Getter
+    @Builder
+    @RequiredArgsConstructor
+    public static class ValidationError {
+
+        private final String field;
+        private final String message;
+
+        public static ValidationError of(final FieldError fieldError) {
+            return ValidationError.builder()
+                    .field(fieldError.getField())
+                    .message(fieldError.getDefaultMessage())
+                    .build();
+        }
+    }
 }
