@@ -1,6 +1,6 @@
 package hometoogether.hometoogether.domain.post.dto.challenge;
 
-import hometoogether.hometoogether.domain.pose.PoseType;
+import hometoogether.hometoogether.domain.pose.domain.PoseType;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 

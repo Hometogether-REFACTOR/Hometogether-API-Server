@@ -1,6 +1,6 @@
 package hometoogether.hometoogether.domain.post.service;
 
-import hometoogether.hometoogether.domain.pose.Pose;
+import hometoogether.hometoogether.domain.pose.domain.Pose;
 import hometoogether.hometoogether.domain.post.domain.Post;
 import hometoogether.hometoogether.domain.post.dto.trial.ReadTrialRes;
 import hometoogether.hometoogether.domain.post.dto.trial.UpdateTrialReq;
@@ -51,7 +51,7 @@ public class TrialService {
         user.addPost(post);
 
         // TODO: 비동기 처리로 자세 분석 완료되면 유저에게 알림(SSE)
-//        poseService.estimatePose(pose);
+        poseService.estimatePose(pose);
 
         return postRepository.save(post).getId();
     }

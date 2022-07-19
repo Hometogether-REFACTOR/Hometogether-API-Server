@@ -78,10 +78,10 @@ public class RoomService{
     }
 
     public void addClientToRoomMember(Long roomId, String email){
-        String userName = userRepository.findByEmail(email).getUserName();
+//        String userName = userRepository.findByEmail(email).getUserName();
         Room room = roomRepository.findById(roomId).orElse(null);
 
-        room.setClientUserName(userName);
+//        room.setClientUserName(userName);
         roomRepository.save(room);
     }
 
@@ -128,7 +128,7 @@ public class RoomService{
         Room room = Room.builder()
                 .cur_num(0L).max_num(2L)
                 .routineId(routineId)
-                .hostUserName(userRepository.findByEmail(email).getUserName())
+//                .hostUserName(userRepository.findByEmail(email).getUserName())
                 .trainings(trainings).build();
 
         return roomRepository.save(room).getId();

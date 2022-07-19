@@ -1,61 +1,84 @@
 package hometoogether.hometoogether.config.jwt;
 
-import hometoogether.hometoogether.domain.user.domain.UserPrincipal;
+import hometoogether.hometoogether.domain.user.domain.User;
+import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
-
     @Value("${app.jwtSecret}")
-    private String jwtSecret;
+    private String secretKey;
+    private long accessTokenValidTime = 1000L * 60 * 60;
+    private long refreshTokenValidTime = 1000L * 60 * 60 * 24;
 
-    @Value("${app.jwtExpirationInMs}")
-    private int jwtExpirationInMs;
+    private final UserRepository userRepository;
 
-    public String generateToken(Authentication authentication) {
-
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
+    public String generateToken(Long userId) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-
-        logger.debug("user : " + userPrincipal.getUsername(), userPrincipal.getId());
-        String jwt = Jwts.builder().setSubject(Long.toString(userPrincipal.getId())).setIssuedAt(new Date())
-                .setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
-        logger.debug("jwt : " + jwt);
-        return jwt;
+        return Jwts.builder()
+                .setIssuedAt(now) // 토큰 발급시간
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidTime)) // 토큰 유효시간
+                .claim("userId", userId) // 토큰에 담을 데이터
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // secretKey를 사용하여 해싱 암호화 알고리즘 처리
+                .compact(); // 직렬화, 문자열로 변경
     }
 
-    public Long getUserIdFromJWT(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-
-        return Long.parseLong(claims.getSubject());
+    public String createRefreshToken() {
+        Date now = new Date();
+        return Jwts.builder()
+                .setIssuedAt(now) // 토큰 발급시간
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidTime)) // 토큰 유효시간
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // secretKey를 사용하여 해싱 암호화 알고리즘 처리
+                .compact(); // 직렬화, 문자열로 변경
     }
 
-    public boolean validateToken(String authToken) {
+    public boolean isValid(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token);
             return true;
-        } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+        } catch (Exception e) {
+            throw new RuntimeException("토큰이 유효하지 않습니다.");
         }
-        return false;
+    }
+
+    public boolean isValidExceptExp(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token);
+            return claims.getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Long getTokenInfo() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String jwt = request.getHeader("Authorization");
+        Jws<Claims> claims = null;
+        try {
+            claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(jwt); // secretKey를 사용하여 복호화
+        } catch (Exception e) {
+            throw new RuntimeException("토큰 정보를 불러올 수 없습니다.");
+        }
+        Object userId = claims.getBody().get("userId");
+        return Long.valueOf(userId.toString());
+    }
+
+    public User getUserFromJwt() {
+        Long userId = this.getTokenInfo();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+        return user;
     }
 }
