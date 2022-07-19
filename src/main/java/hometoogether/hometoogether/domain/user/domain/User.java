@@ -1,8 +1,8 @@
 package hometoogether.hometoogether.domain.user.domain;
 
+import hometoogether.hometoogether.domain.comment.Comment;
+import hometoogether.hometoogether.domain.heart.Heart;
 import hometoogether.hometoogether.domain.post.domain.Post;
-import hometoogether.hometoogether.entity.comment.CommentEntity;
-import hometoogether.hometoogether.entity.heart.HeartEntity;
 import lombok.*;
 import javax.persistence.*;
 import java.util.List;
@@ -25,10 +25,10 @@ public class User {
     private List<Post> postList;
 
     @OneToMany(mappedBy = "user")
-    private List<CommentEntity> commentList;
+    private List<Comment> commentList;
 
     @OneToMany(mappedBy = "user")
-    private List<HeartEntity> heartList;
+    private List<Heart> heartList;
 
     public void addPost(Post post) {
         post.changeUser(this);
