@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 public class Heart {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
