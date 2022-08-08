@@ -1,7 +1,5 @@
 package hometoogether.hometoogether.domain.post.domain;
 
-import hometoogether.hometoogether.domain.comment.Comment;
-import hometoogether.hometoogether.domain.heart.Heart;
 import hometoogether.hometoogether.domain.pose.domain.Pose;
 import hometoogether.hometoogether.domain.user.domain.User;
 import lombok.AllArgsConstructor;
@@ -10,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Builder
@@ -32,14 +29,4 @@ public class Post {
     private String title;
 
     private String content;
-
-    @OneToMany(mappedBy = "post")
-    private List<Comment> commentList;
-
-    @OneToMany(mappedBy = "post")
-    private List<Heart> heartList;
-
-    public void changeUser(User user) {
-        this.user = user;
-    }
 }

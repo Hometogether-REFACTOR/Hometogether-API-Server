@@ -51,8 +51,6 @@ public class ChallengeService {
                 .content(createChallengeReq.getContent())
                 .build();
 
-        user.addPost(post);
-
         // TODO: 비동기 처리로 자세 분석 완료되면 유저에게 알림(SSE)
         poseService.estimatePose(pose);
 
