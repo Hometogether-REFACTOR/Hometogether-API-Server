@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @Entity
-public class Post {
+public abstract class Post {
     @Id @GeneratedValue
     private Long id;
 
