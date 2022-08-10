@@ -1,5 +1,6 @@
 package hometoogether.hometoogether.domain.user.service;
 
+import hometoogether.hometoogether.config.jwt.JwtService;
 import hometoogether.hometoogether.domain.user.dto.JoinReqDto;
 import hometoogether.hometoogether.domain.user.dto.LoginReqDto;
 import hometoogether.hometoogether.domain.user.dto.LoginResDto;
@@ -14,7 +15,7 @@ import javax.transaction.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final JwtTokenProvider tokenProvider;
+    private final JwtService tokenProvider;
 
     @Transactional
     public Long join(JoinReqDto joinReqDto) {
@@ -28,7 +29,10 @@ public class UserService {
     }
 
     public LoginResDto login(LoginReqDto loginReqDto) {
-        return null;
+        return LoginResDto.builder()
+                .accessToken(tokenProvider.generateAccessToken(1L))
+                .refreshToken(tokenProvider.generateRefreshToken())
+                .build();
     }
 
     private Boolean isValidUserName(String username) {
