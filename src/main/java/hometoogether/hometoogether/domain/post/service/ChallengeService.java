@@ -1,6 +1,7 @@
 package hometoogether.hometoogether.domain.post.service;
 
 import hometoogether.hometoogether.domain.pose.domain.Pose;
+import hometoogether.hometoogether.domain.pose.service.FileService;
 import hometoogether.hometoogether.domain.post.domain.Challenge;
 import hometoogether.hometoogether.domain.post.dto.challenge.ReadChallengeRes;
 import hometoogether.hometoogether.domain.post.dto.challenge.CreateChallengeReq;
@@ -29,29 +30,14 @@ public class ChallengeService {
     private final UserRepository userRepository;
     private final ChallengeRepository challengeRepository;
 
-    @Value("${spring.servlet.multipart.location}")
-    String videoPath;
-
     @Transactional
     public Long createChallenge(CreateChallengeReq createChallengeReq) throws IOException {
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException(""));
 
-        String url = fileService.createFileURL(createChallengeReq.getFile());
-        // TODO: 썸네일 생성 후 URL 반환, Pose에 저장
-
-        Pose pose = Pose.builder()
-                .poseType(createChallengeReq.getPoseType())
-                .originalUrl(url)
-                .build();
-
         Challenge challenge = Challenge.builder()
-                .pose(pose)
                 .title(createChallengeReq.getTitle())
                 .content(createChallengeReq.getContent())
                 .build();
-
-        // TODO: 비동기 처리로 자세 분석 완료되면 유저에게 알림(SSE)
-        poseService.estimatePose(pose);
 
         return challengeRepository.save(challenge).getId();
     }
