@@ -18,9 +18,9 @@ public class Pose {
     @Enumerated(value = EnumType.STRING)
     private PoseType poseType;
 
-    private String originalUrl;
+    private String originalFileName;
 
-    private String thumbnailUrl;
+    private String s3FileName;
 
     private String job_id;
 
