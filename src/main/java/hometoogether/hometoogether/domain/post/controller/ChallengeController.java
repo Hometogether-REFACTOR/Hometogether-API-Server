@@ -16,7 +16,7 @@ import java.util.List;
 @CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/challenges")
+@RequestMapping("/challenges")
 public class ChallengeController {
 
     private final ChallengeService challengeService;
