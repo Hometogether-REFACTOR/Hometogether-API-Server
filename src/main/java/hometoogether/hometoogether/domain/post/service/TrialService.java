@@ -45,7 +45,6 @@ public class TrialService {
                 .build();
 
         Trial trial = Trial.builder()
-                .user(user)
                 .pose(pose)
                 .title(createTrialReq.getTitle())
                 .content(createTrialReq.getContent())

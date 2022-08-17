@@ -45,7 +45,6 @@ public class ChallengeService {
                 .build();
 
         Challenge challenge = Challenge.builder()
-                .user(user)
                 .pose(pose)
                 .title(createChallengeReq.getTitle())
                 .content(createChallengeReq.getContent())
