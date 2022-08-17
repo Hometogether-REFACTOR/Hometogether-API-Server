@@ -1,9 +1,9 @@
-package hometoogether.hometoogether.domain.pose.dto;
+package hometoogether.hometoogether.domain.pose.dto.kakaoApi;
 
-import hometoogether.hometoogether.domain.pose.dto.kakaoApiType.Annotation;
-import hometoogether.hometoogether.domain.pose.dto.kakaoApiType.Category;
-import hometoogether.hometoogether.domain.pose.dto.kakaoApiType.Info;
-import hometoogether.hometoogether.domain.pose.dto.kakaoApiType.Video;
+import hometoogether.hometoogether.domain.pose.dto.kakaoApi.kakaoApiType.Annotation;
+import hometoogether.hometoogether.domain.pose.dto.kakaoApi.kakaoApiType.Category;
+import hometoogether.hometoogether.domain.pose.dto.kakaoApi.kakaoApiType.Info;
+import hometoogether.hometoogether.domain.pose.dto.kakaoApi.kakaoApiType.Video;
 import lombok.Data;
 
 import java.util.List;
