@@ -1,7 +1,6 @@
 package hometoogether.hometoogether.domain.post.service;
 
-import hometoogether.hometoogether.domain.pose.domain.Pose;
-import hometoogether.hometoogether.domain.pose.service.FileService;
+import hometoogether.hometoogether.util.FileService;
 import hometoogether.hometoogether.domain.post.domain.Challenge;
 import hometoogether.hometoogether.domain.post.domain.Trial;
 import hometoogether.hometoogether.domain.post.dto.trial.ReadTrialRes;

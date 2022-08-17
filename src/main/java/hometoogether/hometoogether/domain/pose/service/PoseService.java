@@ -8,6 +8,7 @@ import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoResultReq;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoResultRes;
 import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
+import hometoogether.hometoogether.util.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

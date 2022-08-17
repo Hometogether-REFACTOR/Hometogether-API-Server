@@ -1,4 +1,4 @@
-package hometoogether.hometoogether.config.jwt;
+package hometoogether.hometoogether.util;
 
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.repository.UserRepository;
@@ -14,7 +14,7 @@ import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
-public class JwtService {
+public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String secretKey;
