@@ -1,12 +1,13 @@
 package hometoogether.hometoogether.domain.user.domain;
 
 import lombok.*;
+
 import javax.persistence.*;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 public class User {
 
