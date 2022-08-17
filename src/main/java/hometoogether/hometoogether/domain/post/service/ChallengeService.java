@@ -1,7 +1,6 @@
 package hometoogether.hometoogether.domain.post.service;
 
-import hometoogether.hometoogether.domain.pose.domain.Pose;
-import hometoogether.hometoogether.domain.pose.service.FileService;
+import hometoogether.hometoogether.util.FileService;
 import hometoogether.hometoogether.domain.post.domain.Challenge;
 import hometoogether.hometoogether.domain.post.dto.challenge.ReadChallengeRes;
 import hometoogether.hometoogether.domain.post.dto.challenge.CreateChallengeReq;
@@ -12,7 +11,6 @@ import hometoogether.hometoogether.domain.post.repository.ChallengeRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

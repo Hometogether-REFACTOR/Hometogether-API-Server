@@ -1,6 +1,6 @@
 package hometoogether.hometoogether.domain.user.service;
 
-import hometoogether.hometoogether.config.jwt.JwtService;
+import hometoogether.hometoogether.util.JwtUtil;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.dto.JoinReq;
 import hometoogether.hometoogether.domain.user.dto.LoginReq;
@@ -27,7 +27,7 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtService jwtService;
+    private JwtUtil jwtUtil;
 
     @Test
     void 회원가입_성공() throws NoSuchAlgorithmException {
@@ -79,7 +79,7 @@ class UserServiceTest {
         LoginRes loginRes = userService.login(loginReq);
 
         //then
-        assertEquals(jwtService.validateToken(loginRes.getAccessToken()), true);
+        assertEquals(jwtUtil.validateToken(loginRes.getAccessToken()), true);
     }
 
     @Test

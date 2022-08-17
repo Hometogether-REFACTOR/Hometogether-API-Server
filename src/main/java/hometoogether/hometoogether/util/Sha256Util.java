@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @Component
-public class Sha256Encryption {
+public class Sha256Util {
 
     /**
      * UUID 를 이용해 Salting 을 위한 salt 값 생성
