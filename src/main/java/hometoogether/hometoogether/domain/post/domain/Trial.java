@@ -9,10 +9,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class Trial extends Post {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private Double score;
 
     @ManyToOne(fetch = FetchType.LAZY)
