@@ -1,15 +1,15 @@
 package hometoogether.hometoogether.domain.post.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Challenge extends Post {
-    @OneToMany(mappedBy = "challenge")
-    private List<Trial> trialList;
 }

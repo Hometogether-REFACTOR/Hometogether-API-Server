@@ -1,5 +1,6 @@
 package hometoogether.hometoogether.domain.user.service;
 
+import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.dto.JoinReqDto;
 import hometoogether.hometoogether.domain.user.dto.LoginReqDto;
 import hometoogether.hometoogether.domain.user.dto.LoginResDto;
@@ -28,7 +29,11 @@ public class UserService {
     }
 
     public LoginResDto login(LoginReqDto loginReqDto) {
-        return null;
+        User user = userRepository.findByUsername(loginReqDto.getUsername()).orElseThrow(() -> new RuntimeException());
+        if (!loginReqDto.getPassword().equals(user.getPassword())) {
+            throw new RuntimeException();
+        }
+        return new LoginResDto();
     }
 
     private Boolean isValidUserName(String username) {

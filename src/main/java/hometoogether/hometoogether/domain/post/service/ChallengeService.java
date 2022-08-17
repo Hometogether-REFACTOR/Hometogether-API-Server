@@ -1,13 +1,13 @@
 package hometoogether.hometoogether.domain.post.service;
 
 import hometoogether.hometoogether.domain.pose.domain.Pose;
-import hometoogether.hometoogether.domain.post.domain.Post;
+import hometoogether.hometoogether.domain.post.domain.Challenge;
 import hometoogether.hometoogether.domain.post.dto.challenge.ReadChallengeRes;
 import hometoogether.hometoogether.domain.post.dto.challenge.CreateChallengeReq;
 import hometoogether.hometoogether.domain.post.dto.challenge.PreviewChallengeRes;
 import hometoogether.hometoogether.domain.post.dto.challenge.UpdateChallengeReq;
 import hometoogether.hometoogether.domain.pose.service.PoseService;
-import hometoogether.hometoogether.domain.post.repository.PostRepository;
+import hometoogether.hometoogether.domain.post.repository.ChallengeRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class ChallengeService {
     private final PoseService poseService;
 
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
+    private final ChallengeRepository challengeRepository;
 
     @Value("${spring.servlet.multipart.location}")
     String videoPath;
@@ -44,24 +44,21 @@ public class ChallengeService {
                 .originalUrl(url)
                 .build();
 
-        Post post = Post.builder()
-                .user(user)
+        Challenge challenge = Challenge.builder()
                 .pose(pose)
                 .title(createChallengeReq.getTitle())
                 .content(createChallengeReq.getContent())
                 .build();
 
-        user.addPost(post);
-
         // TODO: 비동기 처리로 자세 분석 완료되면 유저에게 알림(SSE)
         poseService.estimatePose(pose);
 
-        return postRepository.save(post).getId();
+        return challengeRepository.save(challenge).getId();
     }
 
     @Transactional(readOnly=true)
     public ReadChallengeRes readChallenge(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
+        Challenge challenge = challengeRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
         return null;
     }
 
@@ -72,15 +69,15 @@ public class ChallengeService {
 
     @Transactional
     public Long updateChallenge(Long postId, UpdateChallengeReq updateChallengeReq) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
+        Challenge challenge = challengeRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
         return null;
     }
 
     @Transactional
     public Long deleteChallenge(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
-        postRepository.delete(post);
-        return post.getId();
+        Challenge challenge = challengeRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
+        challengeRepository.delete(challenge);
+        return challenge.getId();
     }
 
 //    @Transactional

@@ -1,20 +1,20 @@
 package hometoogether.hometoogether.domain.pose.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import hometoogether.hometoogether.domain.user.domain.User;
+import lombok.*;
 
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@NoArgsConstructor
-@Embeddable
+@Entity
 public class Pose {
+
+    @Id @GeneratedValue
+    private Long id;
+
     @Enumerated(value = EnumType.STRING)
     private PoseType poseType;
 
@@ -25,4 +25,7 @@ public class Pose {
     private String job_id;
 
     private String keyPoints;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 }

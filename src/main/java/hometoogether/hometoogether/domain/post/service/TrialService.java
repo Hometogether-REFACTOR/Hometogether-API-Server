@@ -1,13 +1,15 @@
 package hometoogether.hometoogether.domain.post.service;
 
 import hometoogether.hometoogether.domain.pose.domain.Pose;
-import hometoogether.hometoogether.domain.post.domain.Post;
+import hometoogether.hometoogether.domain.post.domain.Challenge;
+import hometoogether.hometoogether.domain.post.domain.Trial;
 import hometoogether.hometoogether.domain.post.dto.trial.ReadTrialRes;
 import hometoogether.hometoogether.domain.post.dto.trial.UpdateTrialReq;
 import hometoogether.hometoogether.domain.pose.service.PoseService;
 import hometoogether.hometoogether.domain.post.dto.trial.CreateTrialReq;
 import hometoogether.hometoogether.domain.post.dto.trial.PreviewTrialRes;
-import hometoogether.hometoogether.domain.post.repository.PostRepository;
+import hometoogether.hometoogether.domain.post.repository.ChallengeRepository;
+import hometoogether.hometoogether.domain.post.repository.TrialRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +28,13 @@ public class TrialService {
     private final PoseService poseService;
 
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
+    private final ChallengeRepository challengeRepository;
+    private final TrialRepository trialRepository;
 
     @Transactional
     public Long createTrial(CreateTrialReq createTrialReq) throws IOException {
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException(""));
-        Post challenge = postRepository.findById(createTrialReq.getChallengeId()).orElseThrow(() -> new RuntimeException(""));
+        Challenge challenge = challengeRepository.findById(createTrialReq.getChallengeId()).orElseThrow(() -> new RuntimeException(""));
 
         String url = fileService.createFileURL(createTrialReq.getFile());
         // TODO: 썸네일 생성 후 URL 반환, Pose에 저장
@@ -41,24 +44,22 @@ public class TrialService {
                 .originalUrl(url)
                 .build();
 
-        Post post = Post.builder()
-                .user(user)
+        Trial trial = Trial.builder()
                 .pose(pose)
                 .title(createTrialReq.getTitle())
                 .content(createTrialReq.getContent())
+                .challenge(challenge)
                 .build();
-
-        user.addPost(post);
 
         // TODO: 비동기 처리로 자세 분석 완료되면 유저에게 알림(SSE)
         poseService.estimatePose(pose);
 
-        return postRepository.save(post).getId();
+        return trialRepository.save(trial).getId();
     }
 
     @Transactional(readOnly=true)
     public ReadTrialRes readTrial(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
+        Trial trial = trialRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
         return null;
     }
 
@@ -69,15 +70,15 @@ public class TrialService {
 
     @Transactional
     public Long updateTrial(Long postId, UpdateTrialReq updateTrialReq) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
+        Trial trial = trialRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
         return null;
     }
 
     @Transactional
     public Long deleteTrial(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
-        postRepository.delete(post);
-        return post.getId();
+        Trial trial = trialRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
+        trialRepository.delete(trial);
+        return trial.getId();
     }
 
 //    @Transactional
