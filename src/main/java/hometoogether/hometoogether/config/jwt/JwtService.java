@@ -34,4 +34,21 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // secretKey를 사용하여 해싱 암호화 알고리즘 처리
                 .compact(); // 직렬화, 문자열로 변경
     }
+
+    public boolean validateToken(String accessToken) {
+        try {
+            Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(accessToken);
+        } catch (SignatureException ex) {
+            throw new RuntimeException("Invalid JWT signature");
+        } catch (MalformedJwtException ex) {
+            throw new RuntimeException("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            throw new RuntimeException("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            throw new RuntimeException("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException("JWT claims string is empty.");
+        }
+        return true;
+    }
 }
