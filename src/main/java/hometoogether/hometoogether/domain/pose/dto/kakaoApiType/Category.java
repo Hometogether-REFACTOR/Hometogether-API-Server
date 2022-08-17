@@ -1,4 +1,4 @@
-package hometoogether.hometoogether.domain.pose.dto.kakaoApi.kakaoApiType;
+package hometoogether.hometoogether.domain.pose.dto.kakaoApiType;
 
 public class Category {
 }

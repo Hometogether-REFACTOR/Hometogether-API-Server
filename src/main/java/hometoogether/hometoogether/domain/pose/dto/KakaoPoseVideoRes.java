@@ -1,4 +1,4 @@
-package hometoogether.hometoogether.domain.pose.dto.kakaoApi;
+package hometoogether.hometoogether.domain.pose.dto;
 
 import lombok.Data;
 
