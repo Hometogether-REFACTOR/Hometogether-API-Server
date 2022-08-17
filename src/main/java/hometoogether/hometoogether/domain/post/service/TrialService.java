@@ -1,6 +1,7 @@
 package hometoogether.hometoogether.domain.post.service;
 
 import hometoogether.hometoogether.domain.pose.domain.Pose;
+import hometoogether.hometoogether.domain.pose.service.FileService;
 import hometoogether.hometoogether.domain.post.domain.Challenge;
 import hometoogether.hometoogether.domain.post.domain.Trial;
 import hometoogether.hometoogether.domain.post.dto.trial.ReadTrialRes;
@@ -36,23 +37,11 @@ public class TrialService {
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException(""));
         Challenge challenge = challengeRepository.findById(createTrialReq.getChallengeId()).orElseThrow(() -> new RuntimeException(""));
 
-        String url = fileService.createFileURL(createTrialReq.getFile());
-        // TODO: 썸네일 생성 후 URL 반환, Pose에 저장
-
-        Pose pose = Pose.builder()
-                .poseType(challenge.getPose().getPoseType())
-                .originalUrl(url)
-                .build();
-
         Trial trial = Trial.builder()
-                .pose(pose)
                 .title(createTrialReq.getTitle())
                 .content(createTrialReq.getContent())
                 .challenge(challenge)
                 .build();
-
-        // TODO: 비동기 처리로 자세 분석 완료되면 유저에게 알림(SSE)
-        poseService.estimatePose(pose);
 
         return trialRepository.save(trial).getId();
     }

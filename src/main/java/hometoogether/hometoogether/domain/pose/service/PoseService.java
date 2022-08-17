@@ -6,21 +6,49 @@ import hometoogether.hometoogether.domain.pose.dto.KakaoPosePhotoRes;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoRes;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoResultReq;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoResultRes;
-import hometoogether.hometoogether.domain.post.repository.PostRepository;
+import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
+import hometoogether.hometoogether.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PoseService {
 
+    private final FileService fileService;
     private final KakaoService kakaoService;
-    private final PostRepository postRepository;
+    private final PoseRepository poseRepository;
+
+    @Transactional
+    public String uploadPose(User user, MultipartFile file) throws IOException {
+
+        PoseType poseType = null;
+        if (file.getContentType().startsWith("image")) {
+            poseType = PoseType.PHOTO;
+        } else if (file.getContentType().startsWith("video")) {
+            poseType = PoseType.VIDEO;
+        }
+
+        String s3FileName = fileService.upload(file);
+
+        Pose pose = poseRepository.save(Pose.builder()
+                .poseType(poseType)
+                .originalFileName(file.getOriginalFilename())
+                .s3FileName(s3FileName)
+                .user(user)
+                .build());
+
+        // TODO: 비동기 처리 구현
+//        estimatePose(pose);
+        
+        return s3FileName;
+    }
 
     @Transactional
     public void estimatePose(Pose pose) {
@@ -28,14 +56,16 @@ public class PoseService {
             estimatePosePhoto(pose);
         }
         else {
+            // TODO: 비동기 처리 구현
             estimatePoseVideo(pose);
         }
     }
 
-    @Async
     @Transactional
     public void estimatePosePhoto(Pose pose) {
         KakaoPosePhotoRes kakaoPosePhotoRes = kakaoService.kakaoPosePhoto(pose);
+
+        // TODO: 자세 정보 저장
     }
 
     @Async
@@ -43,6 +73,7 @@ public class PoseService {
     public void estimatePoseVideo(Pose pose) {
         KakaoPoseVideoRes kakaoPoseVideoRes = kakaoService.kakaoPoseVideo(pose);
 
+        // TODO: 자세 정보 저장
 //        try {
 //            Thread.sleep(60000);
 //            estimatePoseDetailVideo(job_id, pose_id, pose_type);
@@ -54,6 +85,8 @@ public class PoseService {
     @Transactional
     public void estimatePoseVideoResult(KakaoPoseVideoResultReq kakaoPoseVideoResultReq) {
         KakaoPoseVideoResultRes kakaoPoseVideoResultRes = kakaoService.kakaoPoseVideoResult(kakaoPoseVideoResultReq);
+
+        // TODO: 자세 분석 완료 알림(SSE)
     }
 
     //    public String test(String url) throws IOException {

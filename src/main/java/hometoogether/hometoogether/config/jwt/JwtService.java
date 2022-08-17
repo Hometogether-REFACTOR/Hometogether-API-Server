@@ -1,10 +1,15 @@
 package hometoogether.hometoogether.config.jwt;
 
+import hometoogether.hometoogether.domain.user.domain.User;
+import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component
@@ -15,6 +20,8 @@ public class JwtService {
     private String secretKey;
     private long accessTokenValidTime = 1000L * 60 * 60;
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24;
+
+    private UserRepository userRepository;
 
     public String generateAccessToken(Long userId) {
         Date now = new Date();
@@ -50,5 +57,13 @@ public class JwtService {
             throw new RuntimeException("JWT claims string is empty.");
         }
         return true;
+    }
+
+    public User getUserFromHeader() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String userId = request.getHeader("userId");
+        User user = userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+        return user;
     }
 }

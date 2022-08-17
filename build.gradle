@@ -35,19 +35,19 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	implementation 'mysql:mysql-connector-java'
 
+	/*AWS S3*/
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 	/*Spring Rest Docs*/
 	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
+	/*JWT*/
 	implementation 'io.jsonwebtoken:jjwt:0.9.0'
 
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 
 	implementation 'javax.servlet:jstl'
-
-	implementation 'commons-io:commons-io:2.6'
-	compileOnly "com.fasterxml.jackson.core:jackson-databind:2.9.4"
-	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 	implementation 'org.webjars:sockjs-client:1.5.1'
 	implementation 'org.webjars:stomp-websocket:2.3.3'

@@ -21,7 +21,7 @@ public class KakaoService {
 
     public KakaoPosePhotoRes kakaoPosePhoto(Pose pose) {
         KakaoPosePhotoReq kakaoPosePhotoReq = new KakaoPosePhotoReq();
-        kakaoPosePhotoReq.setImage_url(fileServerURL + pose.getOriginalUrl());
+        kakaoPosePhotoReq.setImage_url(fileServerURL + pose.getS3FileName());
 
         return webClient.post()
                 .uri("/pose")
@@ -33,7 +33,7 @@ public class KakaoService {
 
     public KakaoPoseVideoRes kakaoPoseVideo(Pose pose) {
         KakaoPoseVideoReq kakaoPoseVideoReq = new KakaoPoseVideoReq();
-        kakaoPoseVideoReq.setVideo_url(fileServerURL + pose.getOriginalUrl());
+        kakaoPoseVideoReq.setVideo_url(fileServerURL + pose.getS3FileName());
 
         return webClient.post()
                 .uri("/pose/job")
