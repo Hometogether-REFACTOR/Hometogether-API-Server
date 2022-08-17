@@ -1,9 +1,9 @@
 package hometoogether.hometoogether.domain.user.dto;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
-public class LoginReqDto {
+public class JoinReq {
     private String username;
     private String password;
 }

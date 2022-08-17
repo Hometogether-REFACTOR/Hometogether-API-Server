@@ -1,11 +1,13 @@
 package hometoogether.hometoogether.domain.user.controller;
 
-import hometoogether.hometoogether.domain.user.dto.JoinReqDto;
-import hometoogether.hometoogether.domain.user.dto.LoginReqDto;
+import hometoogether.hometoogether.domain.user.dto.JoinReq;
+import hometoogether.hometoogether.domain.user.dto.LoginReq;
 import hometoogether.hometoogether.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.NoSuchAlgorithmException;
 
 @CrossOrigin("*")
 @RestController
@@ -16,12 +18,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/join")
-    public ResponseEntity<Long> join(@RequestBody JoinReqDto joinReqDto) {
-        return ResponseEntity.ok(userService.join(joinReqDto));
+    public ResponseEntity<Long> join(@RequestBody JoinReq joinReq) throws NoSuchAlgorithmException {
+        return ResponseEntity.ok(userService.join(joinReq));
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginReqDto loginReqDto) {
-        return ResponseEntity.ok(userService.login(loginReqDto));
+    public ResponseEntity login(@RequestBody LoginReq loginReq) throws NoSuchAlgorithmException {
+        return ResponseEntity.ok(userService.login(loginReq));
     }
 }
