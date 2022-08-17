@@ -1,9 +1,11 @@
 package hometoogether.hometoogether.domain.user.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class LoginResDto {
+@Builder
+public class LoginRes {
     private String accessToken;
     private String refreshToken;
 }
