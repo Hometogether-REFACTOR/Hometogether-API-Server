@@ -1,6 +1,7 @@
 package hometoogether.hometoogether.domain.user.service;
 
 import hometoogether.hometoogether.config.jwt.JwtService;
+import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.dto.JoinReqDto;
 import hometoogether.hometoogether.domain.user.dto.LoginReqDto;
 import hometoogether.hometoogether.domain.user.dto.LoginResDto;
@@ -29,6 +30,10 @@ public class UserService {
     }
 
     public LoginResDto login(LoginReqDto loginReqDto) {
+        User user = userRepository.findByUsername(loginReqDto.getUsername()).orElseThrow(() -> new RuntimeException());
+        if (!loginReqDto.getPassword().equals(user.getPassword())) {
+            throw new RuntimeException();
+        }
         return LoginResDto.builder()
                 .accessToken(tokenProvider.generateAccessToken(1L))
                 .refreshToken(tokenProvider.generateRefreshToken())

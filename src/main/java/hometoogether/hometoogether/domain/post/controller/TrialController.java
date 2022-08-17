@@ -16,7 +16,7 @@ import java.util.List;
 @CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/trials")
+@RequestMapping("/trials")
 public class TrialController {
 
     private final TrialService trialService;

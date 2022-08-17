@@ -1,14 +1,20 @@
 package hometoogether.hometoogether.domain.post.domain;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 public class Trial extends Post {
+
     private Double score;
 
     @ManyToOne(fetch = FetchType.LAZY)
