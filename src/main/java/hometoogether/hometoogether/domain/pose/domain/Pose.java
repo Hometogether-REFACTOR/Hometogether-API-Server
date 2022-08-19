@@ -24,8 +24,12 @@ public class Pose {
 
     private String job_id;
 
-    private String keyPoints;
+    private String poseDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    public void changePoseDetail(String poseDetail) {
+        this.poseDetail = poseDetail;
+    }
 }

@@ -43,6 +43,10 @@ public class FileService {
         return fileName;
     }
 
+    public String getOriginalFileUrl(String s3FileName) {
+        return s3Client.getUrl(bucket, s3FileName).toString();
+    }
+
     private String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
