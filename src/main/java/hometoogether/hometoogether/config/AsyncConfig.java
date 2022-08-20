@@ -13,10 +13,10 @@ public class AsyncConfig extends AsyncConfigurerSupport {
 
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("hometoo-async-");
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(30);
+        executor.setQueueCapacity(50);
+        executor.setThreadNamePrefix("HOMETOO-ASYNC-");
         executor.initialize();
         return executor;
     }

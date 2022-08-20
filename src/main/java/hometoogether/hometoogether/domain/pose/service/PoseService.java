@@ -1,5 +1,7 @@
 package hometoogether.hometoogether.domain.pose.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hometoogether.hometoogether.domain.pose.domain.Pose;
 import hometoogether.hometoogether.domain.pose.domain.PoseType;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPosePhotoRes;
@@ -10,6 +12,7 @@ import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.util.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,22 +21,25 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class PoseService {
+
+    private final ObjectMapper objectMapper;
 
     private final FileService fileService;
     private final KakaoService kakaoService;
     private final PoseRepository poseRepository;
 
-    @Transactional
     public String uploadPose(User user, MultipartFile file) throws IOException {
 
-        PoseType poseType = null;
+        PoseType poseType;
         if (file.getContentType().startsWith("image")) {
             poseType = PoseType.PHOTO;
         } else if (file.getContentType().startsWith("video")) {
             poseType = PoseType.VIDEO;
+        } else {
+            throw new RuntimeException("지원하지 않는 파일 형식입니다.");
         }
 
         String s3FileName = fileService.upload(file);
@@ -45,89 +51,57 @@ public class PoseService {
                 .user(user)
                 .build());
 
-        // TODO: 비동기 처리 구현
-//        estimatePose(pose);
-        
+        estimatePose(pose);
+
         return s3FileName;
     }
 
+    // TODO: 비동기 처리 구현
+    @Async
     @Transactional
-    public void estimatePose(Pose pose) {
+    public void estimatePose(Pose pose) throws JsonProcessingException {
         if (pose.getPoseType().equals(PoseType.PHOTO)) {
             estimatePosePhoto(pose);
         }
         else {
-            // TODO: 비동기 처리 구현
             estimatePoseVideo(pose);
         }
     }
 
-    @Transactional
-    public void estimatePosePhoto(Pose pose) {
+    public void estimatePosePhoto(Pose pose) throws JsonProcessingException {
         KakaoPosePhotoRes kakaoPosePhotoRes = kakaoService.kakaoPosePhoto(pose);
 
         // TODO: 자세 정보 저장
+        String poseDetail = objectMapper.writeValueAsString(kakaoPosePhotoRes);
+        pose.changePoseDetail(poseDetail);
     }
 
-    @Async
-    @Transactional
-    public void estimatePoseVideo(Pose pose) {
+    public void estimatePoseVideo(Pose pose) throws JsonProcessingException {
         KakaoPoseVideoRes kakaoPoseVideoRes = kakaoService.kakaoPoseVideo(pose);
 
-        // TODO: 자세 정보 저장
-//        try {
-//            Thread.sleep(60000);
-//            estimatePoseDetailVideo(job_id, pose_id, pose_type);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        // TODO: 자세 분석이 완료될 때까지 폴링
+        KakaoPoseVideoResultRes kakaoPoseVideoResultRes = kakaoService.kakaoPoseVideoResult(kakaoPoseVideoRes.getJob_id());
+        while (kakaoPoseVideoResultRes.getStatus().startsWith("failed")) {
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            kakaoPoseVideoResultRes = kakaoService.kakaoPoseVideoResult(kakaoPoseVideoRes.getJob_id());
+        }
+        // TODO: 분석이 완료되면 자세 정보 저장
+        String poseDetail = objectMapper.writeValueAsString(kakaoPoseVideoResultRes.getAnnotations());
+        pose.changePoseDetail(poseDetail);
+
+        // TODO: 자세 분석 완료 알림(SSE), 다중 WAS 환경 고려(Redis Pub/Sub)
+
     }
 
-    @Transactional
     public void estimatePoseVideoResult(KakaoPoseVideoResultReq kakaoPoseVideoResultReq) {
-        KakaoPoseVideoResultRes kakaoPoseVideoResultRes = kakaoService.kakaoPoseVideoResult(kakaoPoseVideoResultReq);
-
-        // TODO: 자세 분석 완료 알림(SSE)
     }
 
-    //    public String test(String url) throws IOException {
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        headers.add("Authorization", "KakaoAK 19a4097fe8917a985bb1a7acc9ce2fb1");
-//
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-////        String url = "https://preview.clipartkorea.co.kr/2016/05/27/ti325057081.jpg";
-////        String url = "https://preview.clipartkorea.co.kr/2015/03/20/tip034z15020088.jpg";
-////        String url = "http://preview.clipartkorea.co.kr/2016/05/27/ti325057171.jpg";
-////        String url = "https://media.istockphoto.com/photos/looking-at-camera-front-view-full-length-one-person-of-2029-years-old-picture-id1182145935";
-//
-//        params.add("image_url", url);
-//
-//        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-//
-//        RestTemplate rt = new RestTemplate();
-//        ResponseEntity<String> response = rt.exchange(
-//                "https://cv-api.kakaobrain.com/pose",
-//                HttpMethod.POST,
-//                entity,
-//                String.class
-//                );
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String jsonbody = response.getBody();
-//        PoseInfo poseInfo = objectMapper.readValue(jsonbody, PoseInfo.class);
-//        poseInfoRepository.save(poseInfo);
-//
-//        Pose pose = Pose.builder()
-//                .url(url)
-//                .poseInfo(poseInfo)
-//                .build();
-//        poseRepository.save(pose);
-//
-//        System.out.println("response = " + response);
-//        return jsonbody;
-//    }
+    @EventListener
+    public void asyncTest() {
 
-
+    }
 }
