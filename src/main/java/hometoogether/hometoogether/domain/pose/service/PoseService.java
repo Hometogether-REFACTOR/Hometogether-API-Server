@@ -99,9 +99,4 @@ public class PoseService {
 
     public void estimatePoseVideoResult(KakaoPoseVideoResultReq kakaoPoseVideoResultReq) {
     }
-
-    @EventListener
-    public void asyncTest() {
-
-    }
 }
