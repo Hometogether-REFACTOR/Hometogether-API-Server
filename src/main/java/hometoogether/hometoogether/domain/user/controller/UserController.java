@@ -2,6 +2,7 @@ package hometoogether.hometoogether.domain.user.controller;
 
 import hometoogether.hometoogether.domain.user.dto.JoinReq;
 import hometoogether.hometoogether.domain.user.dto.LoginReq;
+import hometoogether.hometoogether.domain.user.dto.LoginRes;
 import hometoogether.hometoogether.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginReq loginReq) throws NoSuchAlgorithmException {
+    public ResponseEntity<LoginRes> login(@RequestBody LoginReq loginReq) throws NoSuchAlgorithmException {
         return ResponseEntity.ok(userService.login(loginReq));
+    }
+
+    @GetMapping("/re-issue")
+    public ResponseEntity<LoginRes> reIssue(@RequestParam String username, @RequestParam String refreshToken) {
+        return ResponseEntity.ok(userService.reIssue(username, refreshToken));
     }
 }

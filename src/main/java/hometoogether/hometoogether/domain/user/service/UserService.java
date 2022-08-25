@@ -1,6 +1,6 @@
 package hometoogether.hometoogether.domain.user.service;
 
-import hometoogether.hometoogether.util.JwtUtil;
+import hometoogether.hometoogether.util.JwtProvider;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.dto.JoinReq;
 import hometoogether.hometoogether.domain.user.dto.LoginReq;
@@ -20,7 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final Sha256Util sha256Util;
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public Long join(JoinReq joinReq) throws NoSuchAlgorithmException {
@@ -40,8 +40,8 @@ public class UserService {
             throw new RuntimeException("잘못된 비밀번호입니다.");
         }
         return LoginRes.builder()
-                .accessToken(jwtUtil.generateAccessToken(1L))
-                .refreshToken(jwtUtil.generateRefreshToken())
+                .accessToken(jwtProvider.createAccessToken(user.getId()))
+                .refreshToken(jwtProvider.createRefreshToken(user.getId()))
                 .build();
     }
 
@@ -49,5 +49,14 @@ public class UserService {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
+    }
+
+    public LoginRes reIssue(String username, String refreshToken) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+        jwtProvider.validateRefreshToken(user.getId().toString(), refreshToken);
+        return LoginRes.builder()
+                .accessToken(jwtProvider.createAccessToken(user.getId()))
+                .refreshToken(refreshToken)
+                .build();
     }
 }

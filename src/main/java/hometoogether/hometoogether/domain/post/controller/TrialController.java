@@ -7,7 +7,7 @@ import hometoogether.hometoogether.domain.post.dto.trial.SimpleTrialRes;
 import hometoogether.hometoogether.domain.post.dto.trial.UpdateTrialReq;
 import hometoogether.hometoogether.domain.post.service.TrialService;
 import hometoogether.hometoogether.domain.user.domain.User;
-import hometoogether.hometoogether.util.JwtUtil;
+import hometoogether.hometoogether.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/trials")
 public class TrialController {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtUtil;
     private final TrialService trialService;
 
     @PostMapping
