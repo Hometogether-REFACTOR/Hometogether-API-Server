@@ -6,7 +6,7 @@ import hometoogether.hometoogether.domain.post.dto.challenge.SimpleChallengeRes;
 import hometoogether.hometoogether.domain.post.dto.challenge.UpdateChallengeReq;
 import hometoogether.hometoogether.domain.post.service.ChallengeService;
 import hometoogether.hometoogether.domain.user.domain.User;
-import hometoogether.hometoogether.util.JwtUtil;
+import hometoogether.hometoogether.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +19,12 @@ import java.util.List;
 @RequestMapping("/challenges")
 public class ChallengeController {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final ChallengeService challengeService;
 
     @PostMapping
     public ResponseEntity<Long> createChallenge(CreateChallengeReq createChallengeReq) {
-        User user = jwtUtil.getUserFromHeader();
+        User user = jwtProvider.getUserFromHeader();
         return ResponseEntity.ok(challengeService.createChallenge(user, createChallengeReq));
     }
 
@@ -40,13 +40,13 @@ public class ChallengeController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<Long> updateChallenge(@PathVariable("postId") Long postId, UpdateChallengeReq updateChallengeReq){
-        User user = jwtUtil.getUserFromHeader();
+        User user = jwtProvider.getUserFromHeader();
         return ResponseEntity.ok(challengeService.updateChallenge(user, postId, updateChallengeReq));
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Long> deleteChallenge(@PathVariable("postId") Long postId){
-        User user = jwtUtil.getUserFromHeader();
+        User user = jwtProvider.getUserFromHeader();
         return ResponseEntity.ok(challengeService.deleteChallenge(user, postId));
     }
 

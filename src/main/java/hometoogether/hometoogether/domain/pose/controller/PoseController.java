@@ -1,6 +1,6 @@
 package hometoogether.hometoogether.domain.pose.controller;
 
-import hometoogether.hometoogether.util.JwtUtil;
+import hometoogether.hometoogether.util.JwtProvider;
 import hometoogether.hometoogether.domain.pose.dto.UploadPoseReq;
 import hometoogether.hometoogether.domain.pose.service.PoseService;
 import hometoogether.hometoogether.domain.user.domain.User;
@@ -18,12 +18,12 @@ import java.io.IOException;
 @RequestMapping("/poses")
 public class PoseController {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtProvider;
     private final PoseService poseService;
 
     @PostMapping
     public ResponseEntity uploadPose(@RequestBody UploadPoseReq uploadPoseReq) throws IOException {
-        User user = jwtUtil.getUserFromHeader();
+        User user = jwtProvider.getUserFromHeader();
         return ResponseEntity.ok(poseService.uploadPose(user, uploadPoseReq.getMultipartFile()));
     }
 }
