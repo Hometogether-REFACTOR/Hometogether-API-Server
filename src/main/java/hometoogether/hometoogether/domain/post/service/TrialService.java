@@ -1,6 +1,9 @@
 package hometoogether.hometoogether.domain.post.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import hometoogether.hometoogether.domain.pose.algorithm.SimilarityAlgorithm;
 import hometoogether.hometoogether.domain.pose.domain.Pose;
+import hometoogether.hometoogether.domain.pose.domain.PoseType;
 import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
 import hometoogether.hometoogether.domain.post.domain.Challenge;
 import hometoogether.hometoogether.domain.post.domain.Trial;
@@ -24,12 +27,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TrialService {
 
+    private final SimilarityAlgorithm similarityAlgorithm;
+
     private final PoseRepository poseRepository;
     private final ChallengeRepository challengeRepository;
     private final TrialRepository trialRepository;
 
     @Transactional
-    public Long createTrial(User user, CreateTrialReq createTrialReq)  {
+    public Long createTrial(User user, CreateTrialReq createTrialReq) throws JsonProcessingException {
         Challenge challenge = challengeRepository.findById(createTrialReq.getChallengeId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 챌린지입니다."));
 
@@ -40,9 +45,6 @@ public class TrialService {
             throw new RuntimeException("자신의 Pose에 대한 챌린지만 생성할 수 있습니다.");
         }
 
-        // 자세 유사도 계산
-        // Double score = 0;
-
         Trial trial = Trial.builder()
                 .title(createTrialReq.getTitle())
                 .content(createTrialReq.getContent())
@@ -51,6 +53,15 @@ public class TrialService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+
+        // 자세 유사도 계산
+        Double score;
+        if (pose.getPoseType().equals(PoseType.PHOTO)) {
+            score = similarityAlgorithm.runPhotoSimilarity(challenge.getPose(), trial.getPose());
+        } else {
+            score = similarityAlgorithm.runVideoSimilarity(challenge.getPose(), trial.getPose());
+        }
+        trial.changeScore(score);
 
         return trialRepository.save(trial).getId();
     }

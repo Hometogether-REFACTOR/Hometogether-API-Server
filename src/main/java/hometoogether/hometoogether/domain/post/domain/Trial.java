@@ -19,4 +19,8 @@ public class Trial extends Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Challenge challenge;
+
+    public void changeScore(double score) {
+        this.score = score;
+    }
 }
