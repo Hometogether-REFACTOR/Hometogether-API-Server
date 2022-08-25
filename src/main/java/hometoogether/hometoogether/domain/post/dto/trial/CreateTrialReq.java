@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class CreateTrialReq {
     private Long challengeId;
+    private Long poseId;
     private String title;
     private String content;
-    private MultipartFile file;
 }

@@ -1,16 +1,23 @@
 package hometoogether.hometoogether.domain.post.dto.challenge;
 
-import lombok.Getter;
+import hometoogether.hometoogether.domain.post.domain.Challenge;
+import lombok.Data;
 
-import java.util.List;
-
-@Getter
+@Data
 public class ReadChallengeRes {
-    private Long id;
-    private String type;
-    private String url;
+    private Long challengeId;
     private String username;
+    private String fileUrl;
     private String title;
-    private String context;
-    private List<String> trial_user_List;
+    private String content;
+
+    // 좋아요, 댓글, Trial 수 추가 예정
+
+    public ReadChallengeRes(Challenge challenge) {
+        challengeId = challenge.getId();
+        username = challenge.getPose().getUser().getUsername();
+        fileUrl = challenge.getPose().getS3FileName();
+        title = challenge.getTitle();
+        content = challenge.getContent();
+    }
 }

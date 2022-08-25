@@ -2,28 +2,30 @@ package hometoogether.hometoogether.domain.post.controller;
 
 import hometoogether.hometoogether.domain.post.dto.trial.CreateTrialReq;
 import hometoogether.hometoogether.domain.post.dto.trial.ReadTrialRes;
-import hometoogether.hometoogether.domain.post.dto.trial.PreviewTrialRes;
+import hometoogether.hometoogether.domain.post.dto.trial.SimpleTrialRes;
 import hometoogether.hometoogether.domain.post.dto.trial.UpdateTrialReq;
 import hometoogether.hometoogether.domain.post.service.TrialService;
+import hometoogether.hometoogether.domain.user.domain.User;
+import hometoogether.hometoogether.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/trials")
 public class TrialController {
 
+    private final JwtUtil jwtUtil;
     private final TrialService trialService;
 
     @PostMapping
-    public ResponseEntity<Long> createTrial(CreateTrialReq createTrialReq) throws IOException {
-        return ResponseEntity.ok(trialService.createTrial(createTrialReq));
+    public ResponseEntity<Long> createTrial(CreateTrialReq createTrialReq) {
+        User user = jwtUtil.getUserFromHeader();
+        return ResponseEntity.ok(trialService.createTrial(user, createTrialReq));
     }
 
     @GetMapping("/{postId}")
@@ -31,19 +33,21 @@ public class TrialController {
         return ResponseEntity.ok(trialService.readTrial(postId));
     }
 
-    @GetMapping("/of/{challengeId}/trials")
-    public List<PreviewTrialRes> getTrialList(@PathVariable("challengeId") Long challengeId, Pageable pageable){
+    @GetMapping("/list/{challengeId}")
+    public List<SimpleTrialRes> getTrialList(@PathVariable("challengeId") Long challengeId, Pageable pageable){
         return trialService.getTrialList(challengeId, pageable);
     }
 
     @PutMapping("/{postId}")
     public ResponseEntity<Long> updateTrial(@PathVariable("postId") Long postId, UpdateTrialReq updateTrialReq){
-        return ResponseEntity.ok(trialService.updateTrial(postId, updateTrialReq));
+        User user = jwtUtil.getUserFromHeader();
+        return ResponseEntity.ok(trialService.updateTrial(user, postId, updateTrialReq));
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Long> deleteTrial(@PathVariable("postId") Long postId){
-        return ResponseEntity.ok(trialService.deleteTrial(postId));
+        User user = jwtUtil.getUserFromHeader();
+        return ResponseEntity.ok(trialService.deleteTrial(user, postId));
     }
 
 //    @GetMapping("/trials/{trialId}/estimate/detail")

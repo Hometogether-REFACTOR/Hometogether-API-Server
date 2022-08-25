@@ -1,12 +1,12 @@
-package hometoogether.hometoogether.domain.post.dto.challenge;
+package hometoogether.hometoogether.domain.post.dto.trial;
 
 import lombok.Data;
 
 @Data
-public class PreviewChallengeRes {
+public class SimpleTrialRes {
     private Long id;
     private String type;
     private String url;
     private String username;
-    private String title;
+    private Double score;
 }

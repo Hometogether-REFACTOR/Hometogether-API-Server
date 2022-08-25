@@ -2,28 +2,30 @@ package hometoogether.hometoogether.domain.post.controller;
 
 import hometoogether.hometoogether.domain.post.dto.challenge.ReadChallengeRes;
 import hometoogether.hometoogether.domain.post.dto.challenge.CreateChallengeReq;
-import hometoogether.hometoogether.domain.post.dto.challenge.PreviewChallengeRes;
+import hometoogether.hometoogether.domain.post.dto.challenge.SimpleChallengeRes;
 import hometoogether.hometoogether.domain.post.dto.challenge.UpdateChallengeReq;
 import hometoogether.hometoogether.domain.post.service.ChallengeService;
+import hometoogether.hometoogether.domain.user.domain.User;
+import hometoogether.hometoogether.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/challenges")
 public class ChallengeController {
 
+    private final JwtUtil jwtUtil;
     private final ChallengeService challengeService;
 
     @PostMapping
-    public ResponseEntity<Long> createChallenge(CreateChallengeReq createChallengeReq) throws IOException {
-        return ResponseEntity.ok(challengeService.createChallenge(createChallengeReq));
+    public ResponseEntity<Long> createChallenge(CreateChallengeReq createChallengeReq) {
+        User user = jwtUtil.getUserFromHeader();
+        return ResponseEntity.ok(challengeService.createChallenge(user, createChallengeReq));
     }
 
     @GetMapping("/{postId}")
@@ -32,18 +34,20 @@ public class ChallengeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PreviewChallengeRes>> getChallengeList(Pageable pageable){
+    public ResponseEntity<List<SimpleChallengeRes>> getChallengeList(Pageable pageable){
         return ResponseEntity.ok(challengeService.getChallengeList(pageable));
     }
 
     @PutMapping("/{postId}")
     public ResponseEntity<Long> updateChallenge(@PathVariable("postId") Long postId, UpdateChallengeReq updateChallengeReq){
-        return ResponseEntity.ok(challengeService.updateChallenge(postId, updateChallengeReq));
+        User user = jwtUtil.getUserFromHeader();
+        return ResponseEntity.ok(challengeService.updateChallenge(user, postId, updateChallengeReq));
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Long> deleteChallenge(@PathVariable("postId") Long postId){
-        return ResponseEntity.ok(challengeService.deleteChallenge(postId));
+        User user = jwtUtil.getUserFromHeader();
+        return ResponseEntity.ok(challengeService.deleteChallenge(user, postId));
     }
 
 //    @GetMapping("/trending")
