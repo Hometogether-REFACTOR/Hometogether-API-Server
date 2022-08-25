@@ -8,10 +8,12 @@ import hometoogether.hometoogether.domain.pose.dto.KakaoPosePhotoRes;
 import hometoogether.hometoogether.domain.pose.dto.kakaoApiType.Annotation;
 import hometoogether.hometoogether.domain.pose.dto.kakaoApiType.Person;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @RequiredArgsConstructor
 public class SimilarityAlgorithm {
 

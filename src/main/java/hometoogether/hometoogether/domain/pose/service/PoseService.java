@@ -2,6 +2,7 @@ package hometoogether.hometoogether.domain.pose.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hometoogether.hometoogether.domain.notification.NotificationService;
 import hometoogether.hometoogether.domain.pose.domain.Pose;
 import hometoogether.hometoogether.domain.pose.domain.PoseType;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPosePhotoRes;
@@ -12,7 +13,6 @@ import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.util.FileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +29,8 @@ public class PoseService {
 
     private final FileService fileService;
     private final KakaoService kakaoService;
+    private final NotificationService notificationService;
+
     private final PoseRepository poseRepository;
 
     public String uploadPose(User user, MultipartFile file) throws IOException {
@@ -94,7 +96,7 @@ public class PoseService {
         pose.changePoseDetail(poseDetail);
 
         // TODO: 자세 분석 완료 알림(SSE), 다중 WAS 환경 고려(Redis Pub/Sub)
-
+        notificationService.send(pose.getUser(), "자세 분석이 완료되었습니다.");
     }
 
     public void estimatePoseVideoResult(KakaoPoseVideoResultReq kakaoPoseVideoResultReq) {
