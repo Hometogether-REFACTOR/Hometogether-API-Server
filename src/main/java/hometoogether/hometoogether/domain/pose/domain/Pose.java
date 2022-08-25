@@ -12,6 +12,8 @@ import javax.persistence.*;
 @Entity
 public class Pose {
 
+    private final String DELETED_FILE_URL = "삭제된 이미지";
+
     @Id @GeneratedValue
     private Long id;
 
@@ -29,7 +31,15 @@ public class Pose {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    public void changeUser(User user) {
+        this.user = user;
+    }
+
     public void changePoseDetail(String poseDetail) {
         this.poseDetail = poseDetail;
+    }
+
+    public void deletePose() {
+        this.s3FileName = DELETED_FILE_URL;
     }
 }
