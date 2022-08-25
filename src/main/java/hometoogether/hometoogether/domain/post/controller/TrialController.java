@@ -1,5 +1,6 @@
 package hometoogether.hometoogether.domain.post.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import hometoogether.hometoogether.domain.post.dto.trial.CreateTrialReq;
 import hometoogether.hometoogether.domain.post.dto.trial.ReadTrialRes;
 import hometoogether.hometoogether.domain.post.dto.trial.SimpleTrialRes;
@@ -23,7 +24,7 @@ public class TrialController {
     private final TrialService trialService;
 
     @PostMapping
-    public ResponseEntity<Long> createTrial(CreateTrialReq createTrialReq) {
+    public ResponseEntity<Long> createTrial(CreateTrialReq createTrialReq) throws JsonProcessingException {
         User user = jwtUtil.getUserFromHeader();
         return ResponseEntity.ok(trialService.createTrial(user, createTrialReq));
     }

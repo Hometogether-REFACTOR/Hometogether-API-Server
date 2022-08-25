@@ -2,6 +2,7 @@ package hometoogether.hometoogether.domain.pose.service;
 
 import hometoogether.hometoogether.domain.pose.domain.Pose;
 import hometoogether.hometoogether.domain.pose.domain.PoseType;
+import hometoogether.hometoogether.domain.pose.dto.KakaoPosePhotoRes;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoRes;
 import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoResultRes;
 import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
@@ -30,10 +31,10 @@ class KakaoServiceTest {
         poseRepository.save(pose);
 
         //when
-        KakaoPoseVideoRes kakaoPoseVideoRes = kakaoService.kakaoPoseVideo(pose);
+        KakaoPosePhotoRes kakaoPosePhotoRes = kakaoService.kakaoPosePhoto(pose);
 
         //then
-        System.out.println("kakaoPoseVideoRes.toString() = " + kakaoPoseVideoRes.toString());
+        System.out.println("kakaoPosePhotoRes.toString() = " + kakaoPosePhotoRes.toString());
     }
 
     @Test
