@@ -1,44 +1,50 @@
 package hometoogether.hometoogether.domain.post.service;
 
-import hometoogether.hometoogether.util.FileService;
+import hometoogether.hometoogether.domain.pose.domain.Pose;
+import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
 import hometoogether.hometoogether.domain.post.domain.Challenge;
 import hometoogether.hometoogether.domain.post.domain.Trial;
 import hometoogether.hometoogether.domain.post.dto.trial.ReadTrialRes;
 import hometoogether.hometoogether.domain.post.dto.trial.UpdateTrialReq;
-import hometoogether.hometoogether.domain.pose.service.PoseService;
 import hometoogether.hometoogether.domain.post.dto.trial.CreateTrialReq;
-import hometoogether.hometoogether.domain.post.dto.trial.PreviewTrialRes;
+import hometoogether.hometoogether.domain.post.dto.trial.SimpleTrialRes;
 import hometoogether.hometoogether.domain.post.repository.ChallengeRepository;
 import hometoogether.hometoogether.domain.post.repository.TrialRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
-import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class TrialService {
 
-    private final FileService fileService;
-    private final PoseService poseService;
-
-    private final UserRepository userRepository;
+    private final PoseRepository poseRepository;
     private final ChallengeRepository challengeRepository;
     private final TrialRepository trialRepository;
 
     @Transactional
-    public Long createTrial(CreateTrialReq createTrialReq) throws IOException {
-        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException(""));
-        Challenge challenge = challengeRepository.findById(createTrialReq.getChallengeId()).orElseThrow(() -> new RuntimeException(""));
+    public Long createTrial(User user, CreateTrialReq createTrialReq)  {
+        Challenge challenge = challengeRepository.findById(createTrialReq.getChallengeId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 챌린지입니다."));
+
+        Pose pose = poseRepository.findById(createTrialReq.getPoseId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 Pose 입니다."));
+
+        if (!pose.getUser().equals(user)) {
+            throw new RuntimeException("자신의 Pose에 대한 챌린지만 생성할 수 있습니다.");
+        }
+
+        // 자세 유사도 계산
+        // Double score = 0;
 
         Trial trial = Trial.builder()
                 .title(createTrialReq.getTitle())
                 .content(createTrialReq.getContent())
+                .pose(pose)
                 .challenge(challenge)
                 .build();
 
@@ -47,24 +53,46 @@ public class TrialService {
 
     @Transactional(readOnly=true)
     public ReadTrialRes readTrial(Long postId) {
-        Trial trial = trialRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
-        return null;
+        Trial trial = trialRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 Trial입니다."));
+        return new ReadTrialRes(trial);
     }
 
     @Transactional(readOnly=true)
-    public List<PreviewTrialRes> getTrialList(Long challengeId, Pageable pageable) {
+    public List<SimpleTrialRes> getTrialList(Long challengeId, Pageable pageable) {
+//        trialRepository.findByChallengeId()
         return null;
     }
 
     @Transactional
-    public Long updateTrial(Long postId, UpdateTrialReq updateTrialReq) {
-        Trial trial = trialRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
-        return null;
+    public Long updateTrial(User user, Long postId, UpdateTrialReq updateTrialReq) {
+        Trial trial = trialRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 Trial입니다."));
+
+        if (!trial.getPose().getUser().equals(user)) {
+            throw new RuntimeException("Trial을 수정할 권한이 없습니다.");
+        }
+
+        Pose pose = poseRepository.findById(updateTrialReq.getPoseId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 Pose 입니다."));
+
+        if (!pose.getUser().equals(user)) {
+            throw new RuntimeException("자신의 Pose에 대한 Trial만 생성할 수 있습니다.");
+        }
+
+        trial.update(updateTrialReq.getTitle(), updateTrialReq.getContent(), pose);
+        return trial.getId();
     }
 
     @Transactional
-    public Long deleteTrial(Long postId) {
-        Trial trial = trialRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(""));
+    public Long deleteTrial(User user, Long postId) {
+        Trial trial = trialRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 Trial입니다."));
+
+        if (!trial.getPose().getUser().equals(user)) {
+            throw new RuntimeException("Trial을 삭제할 권한이 없습니다.");
+        }
+
         trialRepository.delete(trial);
         return trial.getId();
     }

@@ -27,4 +27,10 @@ public abstract class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pose pose;
+
+    public void update(String title, String content, Pose pose) {
+        this.title = title;
+        this.content = content;
+        this.pose = pose;
+    }
 }

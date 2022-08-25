@@ -3,7 +3,7 @@ package hometoogether.hometoogether.domain.post.dto.trial;
 import lombok.Data;
 
 @Data
-public class PreviewTrialRes {
+public class SimpleTrialRes {
     private Long id;
     private String type;
     private String url;
