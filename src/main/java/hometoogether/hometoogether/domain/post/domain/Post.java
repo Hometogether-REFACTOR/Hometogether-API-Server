@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @SuperBuilder
@@ -28,9 +29,14 @@ public abstract class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     private Pose pose;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
     public void update(String title, String content, Pose pose) {
         this.title = title;
         this.content = content;
         this.pose = pose;
+        this.updatedAt = LocalDateTime.now();
     }
 }
