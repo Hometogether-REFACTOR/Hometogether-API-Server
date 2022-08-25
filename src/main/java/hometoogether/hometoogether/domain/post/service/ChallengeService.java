@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,8 @@ public class ChallengeService {
                 .title(createChallengeReq.getTitle())
                 .content(createChallengeReq.getContent())
                 .pose(pose)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         return challengeRepository.save(challenge).getId();
@@ -50,7 +53,7 @@ public class ChallengeService {
     }
 
     public List<SimpleChallengeRes> getChallengeList(Pageable pageable) {
-        return challengeRepository.findAll().stream()
+        return challengeRepository.findChallengeAll(pageable).stream()
                 .map(c -> new SimpleChallengeRes(c))
                 .collect(Collectors.toList());
     }

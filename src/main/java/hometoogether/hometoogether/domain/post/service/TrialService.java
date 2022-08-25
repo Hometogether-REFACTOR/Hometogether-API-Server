@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class TrialService {
         Challenge challenge = challengeRepository.findById(createTrialReq.getChallengeId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 챌린지입니다."));
 
-        Pose pose = poseRepository.findById(createTrialReq.getPoseId())
+        Pose pose = poseRepository.findPoseById(createTrialReq.getPoseId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 Pose 입니다."));
 
         if (!pose.getUser().equals(user)) {
@@ -46,6 +48,8 @@ public class TrialService {
                 .content(createTrialReq.getContent())
                 .pose(pose)
                 .challenge(challenge)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         return trialRepository.save(trial).getId();
@@ -53,27 +57,29 @@ public class TrialService {
 
     @Transactional(readOnly=true)
     public ReadTrialRes readTrial(Long postId) {
-        Trial trial = trialRepository.findById(postId)
+        Trial trial = trialRepository.findTrialById(postId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 Trial입니다."));
         return new ReadTrialRes(trial);
     }
 
     @Transactional(readOnly=true)
     public List<SimpleTrialRes> getTrialList(Long challengeId, Pageable pageable) {
-//        trialRepository.findByChallengeId()
+        trialRepository.findTrialAll(challengeId, pageable).stream()
+                .map(t -> new SimpleTrialRes(t))
+                .collect(Collectors.toList());
         return null;
     }
 
     @Transactional
     public Long updateTrial(User user, Long postId, UpdateTrialReq updateTrialReq) {
-        Trial trial = trialRepository.findById(postId)
+        Trial trial = trialRepository.findTrialById(postId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 Trial입니다."));
 
         if (!trial.getPose().getUser().equals(user)) {
             throw new RuntimeException("Trial을 수정할 권한이 없습니다.");
         }
 
-        Pose pose = poseRepository.findById(updateTrialReq.getPoseId())
+        Pose pose = poseRepository.findPoseById(updateTrialReq.getPoseId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 Pose 입니다."));
 
         if (!pose.getUser().equals(user)) {
@@ -86,7 +92,7 @@ public class TrialService {
 
     @Transactional
     public Long deleteTrial(User user, Long postId) {
-        Trial trial = trialRepository.findById(postId)
+        Trial trial = trialRepository.findTrialById(postId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 Trial입니다."));
 
         if (!trial.getPose().getUser().equals(user)) {
