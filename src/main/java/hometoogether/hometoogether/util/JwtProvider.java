@@ -19,6 +19,10 @@ public class JwtProvider {
 
     @Value("${jwt.secret}")
     private String secretKey;
+
+    @Value("${jwt.blackList}")
+    private String blackListPrefix;
+
     private long accessTokenValidTime = 1000L * 60 * 60;
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24;
 
@@ -43,6 +47,11 @@ public class JwtProvider {
                 .claim("userId", userId) // 토큰에 담을 데이터
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // secretKey를 사용하여 해싱 암호화 알고리즘 처리
                 .compact(); // 직렬화, 문자열로 변경
+    }
+
+    public void blackListToken(Long userId, String accessToken) {
+        redisService.setValues(blackListPrefix + userId.toString(), accessToken, Duration.ofMillis(accessTokenValidTime));
+        redisService.deleteValues(userId.toString());
     }
 
     public boolean validateAccessToken(String accessToken) {

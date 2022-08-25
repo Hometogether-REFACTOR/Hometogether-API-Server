@@ -59,4 +59,8 @@ public class UserService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    public void logout(User user, String accessToken) {
+        jwtProvider.blackListToken(user.getId(), accessToken);
+    }
 }
