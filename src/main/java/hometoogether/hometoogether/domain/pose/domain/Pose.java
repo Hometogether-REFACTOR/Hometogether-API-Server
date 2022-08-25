@@ -24,7 +24,7 @@ public class Pose {
 
     private String s3FileName;
 
-    private String job_id;
+    private String jobId;
 
     private String poseDetail;
 
@@ -33,6 +33,10 @@ public class Pose {
 
     public void changeUser(User user) {
         this.user = user;
+    }
+
+    public void changeJobId(String jobId) {
+        this.jobId = jobId;
     }
 
     public void changePoseDetail(String poseDetail) {
