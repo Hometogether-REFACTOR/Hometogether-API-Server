@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginReq {
-    private String username;
-    private String password;
+public class UpdateProfileReq {
+    private String nickname;
+    private String introduction;
+    private String profileImageURL;
 }

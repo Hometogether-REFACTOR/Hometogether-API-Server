@@ -1,103 +1,157 @@
 package hometoogether.hometoogether.domain.user.service;
 
+import hometoogether.hometoogether.domain.user.dto.ReadProfileRes;
+import hometoogether.hometoogether.domain.user.dto.UpdateProfileReq;
 import hometoogether.hometoogether.util.JwtProvider;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.domain.user.dto.JoinReq;
 import hometoogether.hometoogether.domain.user.dto.LoginReq;
-import hometoogether.hometoogether.domain.user.dto.LoginRes;
 import hometoogether.hometoogether.domain.user.repository.UserRepository;
+import hometoogether.hometoogether.util.Sha256Util;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @Autowired
+    @InjectMocks
     private UserService userService;
-
-    @Autowired
+    @Mock
     private UserRepository userRepository;
-
-    @Autowired
+    @Mock
+    private Sha256Util sha256Util;
+    @Mock
     private JwtProvider jwtProvider;
 
     @Test
-    void 회원가입_성공() throws NoSuchAlgorithmException {
+    @DisplayName("회원 가입을 성공한다.")
+    void join1() throws NoSuchAlgorithmException {
         //given
-        JoinReq joinReq = new JoinReq();
-        joinReq.setUsername("kim");
-        joinReq.setPassword("1234");
+        JoinReq joinReq = new JoinReq("userA", "1234", "nick");
+
+        String salt = doReturn("salt").when(sha256Util).makeSalt();
+        String saltedPassword = doReturn("saltedPassword").when(sha256Util).sha256(joinReq.getPassword(), "salt");
+
+        doReturn(Optional.ofNullable(null)).when(userRepository).findByUsername(anyString());
+        doReturn(Optional.ofNullable(null)).when(userRepository).findByNickname(anyString());
+
+        doReturn(User.builder()
+                .username(joinReq.getUsername())
+                .password(saltedPassword)
+                .salt(salt)
+                .nickname(joinReq.getNickname())
+                .build()).when(userRepository).save(any(User.class));
 
         //when
-        Long userId = userService.join(joinReq);
+        User user = userService.join(joinReq);
 
         //then
-        Optional<User> user = userRepository.findById(userId);
-        assertNotNull(user);
-        assertEquals(user.get().getUsername(), joinReq.getUsername());
+        assertEquals(user.getUsername(), joinReq.getUsername());
+        assertEquals(user.getPassword(), saltedPassword);
     }
 
     @Test
-    void 회원가입_실패() throws NoSuchAlgorithmException {
+    @DisplayName("같은 닉네임으로 회원 가입을 시도하면 실패한다.")
+    void join2() {
         //given
-        JoinReq joinReq1 = new JoinReq();
-        joinReq1.setUsername("kim");
-        joinReq1.setPassword("1234");
-        userService.join(joinReq1);
+        doReturn(Optional.ofNullable(null)).when(userRepository).findByUsername(anyString());
+        doReturn(Optional.of(User.builder()
+                .username("userA")
+                .password("1234")
+                .salt("1234")
+                .nickname("nick")
+                .build())).when(userRepository).findByNickname(any(String.class));
 
-        //when
-        JoinReq joinReq2 = new JoinReq();
-        joinReq2.setUsername("kim");
-        joinReq2.setPassword("1234");
+        JoinReq joinReq = new JoinReq("userB", "5678", "nick");
 
-        //then
-        assertThrows(RuntimeException.class, () -> {
-            userService.join(joinReq2);
-        });
+        //when, then
+        assertThrows(RuntimeException.class, () -> userService.join(joinReq));
     }
 
     @Test
-    void 로그인_성공() throws NoSuchAlgorithmException {
+    @DisplayName("로그인을 성공한다.")
+    void login() throws NoSuchAlgorithmException {
         //given
-        JoinReq joinReq = new JoinReq();
-        joinReq.setUsername("kim");
-        joinReq.setPassword("1234");
-        userService.join(joinReq);
+        LoginReq loginReq = new LoginReq("userA", "1234");
+        doReturn(Optional.of(User.builder()
+                .username("userA")
+                .password("saltedPassword")
+                .salt("salt")
+                .nickname("nick")
+                .build())).when(userRepository).findByUsername(anyString());
+        doReturn("saltedPassword").when(sha256Util).sha256(anyString(), anyString());
 
-        //when
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("kim");
-        loginReq.setPassword("1234");
-        LoginRes loginRes = userService.login(loginReq);
-
-        //then
-        assertEquals(jwtProvider.validateAccessToken(loginRes.getAccessToken()), true);
+        //when, then
+        assertDoesNotThrow(() -> userService.login(loginReq));
     }
 
     @Test
-    void 로그인_실패() throws NoSuchAlgorithmException {
+    @DisplayName("프로필을 수정할 수 있다.")
+    void update() {
         //given
-        JoinReq joinReq = new JoinReq();
-        joinReq.setUsername("kim");
-        joinReq.setPassword("1234");
-        userService.join(joinReq);
+        User user = User.builder()
+                .username("userA")
+                .password("saltedPassword")
+                .salt("salt")
+                .nickname("nick")
+                .build();
+
+        UpdateProfileReq updateProfileReq = new UpdateProfileReq("newNick", "hello", "flower");
 
         //when
-        LoginReq loginReq = new LoginReq();
-        loginReq.setUsername("kim");
-        loginReq.setPassword("1235");
+        userService.updateProfile(user, updateProfileReq);
 
         //then
-        assertThrows(RuntimeException.class, () -> {
-            userService.login(loginReq);
-        });
+        assertEquals(updateProfileReq.getNickname(), user.getNickname());
+        assertEquals(updateProfileReq.getIntroduction(), user.getIntroduction());
+        assertEquals(updateProfileReq.getProfileImageURL(), user.getProfileImageURL());
+    }
+
+    @Test
+    @DisplayName("프로필을 조회할 수 있다.")
+    void profile() {
+        //given
+        doReturn(Optional.of(User.builder()
+                .username("userA")
+                .password("saltedPassword")
+                .salt("salt")
+                .nickname("nick")
+                .build())).when(userRepository).findByUsername(anyString());
+
+        //when
+        ReadProfileRes readProfileRes = userService.readProfile("userA");
+
+        //then
+        assertEquals("nick", readProfileRes.getNickname());
+    }
+
+    @Test
+    @DisplayName("탈퇴할 수 있다.")
+    void withdraw() {
+        //given
+        User user = User.builder()
+                .username("userA")
+                .password("saltedPassword")
+                .salt("salt")
+                .nickname("nick")
+                .build();
+
+        //when
+        userService.withdraw(user, "");
+
+        //then
+        assertTrue(user.getNickname().startsWith("탈퇴한 유저"));
     }
 }

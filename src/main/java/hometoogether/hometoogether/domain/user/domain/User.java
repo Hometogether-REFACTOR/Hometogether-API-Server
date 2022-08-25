@@ -60,6 +60,8 @@ public class User {
     }
 
     public void deleteUser() {
+        this.username = UUID.randomUUID().toString();
+        this.password = UUID.randomUUID().toString();
         this.nickname = WITHDRAW_NICKNAME + '_' + UUID.randomUUID();
         this.introduction = DEFAULT_INTRODUCTION;
         this.profileImageURL = DEFAULT_PROFILE_IMAGE_URL;
