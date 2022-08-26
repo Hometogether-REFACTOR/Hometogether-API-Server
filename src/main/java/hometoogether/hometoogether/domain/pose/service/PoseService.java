@@ -51,8 +51,8 @@ public class PoseService {
                 .poseType(poseType)
                 .originalFileName(file.getOriginalFilename())
                 .s3FileName(s3FileName)
-                .user(user)
                 .build());
+        user.addPose(pose);
 
         estimatePose(pose);
 

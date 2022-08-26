@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Pose {
@@ -41,9 +41,5 @@ public class Pose {
 
     public void changePoseDetail(String poseDetail) {
         this.poseDetail = poseDetail;
-    }
-
-    public void deletePose() {
-        this.s3FileName = DELETED_FILE_URL;
     }
 }
