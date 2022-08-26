@@ -1,9 +1,13 @@
 package hometoogether.hometoogether.domain.pose.domain;
 
+import hometoogether.hometoogether.domain.post.domain.Challenge;
+import hometoogether.hometoogether.domain.post.domain.Trial;
 import hometoogether.hometoogether.domain.user.domain.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -31,6 +35,12 @@ public class Pose {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @OneToMany(mappedBy = "pose")
+    private List<Challenge> challenges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pose")
+    private List<Trial> trials = new ArrayList<>();
+
     public void changeUser(User user) {
         this.user = user;
     }
@@ -41,5 +51,15 @@ public class Pose {
 
     public void changePoseDetail(String poseDetail) {
         this.poseDetail = poseDetail;
+    }
+
+    public void addChallenge(Challenge challenge) {
+        this.getChallenges().add(challenge);
+        challenge.changePose(this);
+    }
+
+    public void addTrial(Trial trial) {
+        this.getTrials().add(trial);
+        trial.changePose(this);
     }
 }

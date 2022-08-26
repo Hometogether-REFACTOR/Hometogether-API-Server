@@ -27,7 +27,7 @@ public class PoseController {
     }
 
     @GetMapping
-    public ResponseEntity<ReadPoseListRes> readPose(Pageable pageable) {
-        return ResponseEntity.ok(poseService.readPose(pageable));
+    public ResponseEntity<ReadPoseListRes> readPoses(Pageable pageable) {
+        return ResponseEntity.ok(poseService.readPoses(pageable));
     }
 }

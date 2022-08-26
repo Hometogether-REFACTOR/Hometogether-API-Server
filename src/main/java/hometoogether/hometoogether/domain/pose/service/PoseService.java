@@ -106,7 +106,7 @@ public class PoseService {
     public void estimatePoseVideoResult(KakaoPoseVideoResultReq kakaoPoseVideoResultReq) {
     }
 
-    public ReadPoseListRes readPose(Pageable pageable) {
+    public ReadPoseListRes readPoses(Pageable pageable) {
         List<String> poseFileUrlList = new ArrayList<>();
         poseRepository.findByUser(pageable).stream()
                 .map(p -> poseFileUrlList.add(p.getS3FileName()));

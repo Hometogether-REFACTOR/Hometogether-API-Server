@@ -39,4 +39,8 @@ public abstract class Post {
         this.pose = pose;
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void changePose(Pose pose) {
+        this.pose = pose;
+    }
 }
