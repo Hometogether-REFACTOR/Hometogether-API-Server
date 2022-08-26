@@ -10,6 +10,7 @@ import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.util.FileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PoseService {
@@ -63,6 +65,7 @@ public class PoseService {
     @Async
     @Transactional
     public void estimatePose(Pose pose) throws JsonProcessingException {
+        log.info("자세 분석 요청 시작");
         if (pose.getPoseType().equals(PoseType.PHOTO)) {
             estimatePosePhoto(pose);
         }
@@ -73,6 +76,7 @@ public class PoseService {
 
     @Transactional
     public void estimatePosePhoto(Pose pose) throws JsonProcessingException {
+        log.info("이미지 분석 요청 시작");
         KakaoPosePhotoRes kakaoPosePhotoRes = kakaoService.kakaoPosePhoto(pose);
 
         // TODO: 자세 정보 저장
@@ -82,6 +86,7 @@ public class PoseService {
 
     @Transactional
     public void estimatePoseVideo(Pose pose) throws JsonProcessingException {
+        log.info("동영상 분석 요청 시작");
         KakaoPoseVideoRes kakaoPoseVideoRes = kakaoService.kakaoPoseVideo(pose);
         pose.changeJobId(kakaoPoseVideoRes.getJob_id());
 
