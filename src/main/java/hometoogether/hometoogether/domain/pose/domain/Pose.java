@@ -16,8 +16,6 @@ import java.util.List;
 @Entity
 public class Pose {
 
-    private final String DELETED_FILE_URL = "삭제된 이미지";
-
     @Id @GeneratedValue
     private Long id;
 
