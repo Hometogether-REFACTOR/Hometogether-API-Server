@@ -1,6 +1,5 @@
 package hometoogether.hometoogether.domain.post.domain;
 
-import hometoogether.hometoogether.domain.pose.domain.Pose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @SuperBuilder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
@@ -26,17 +25,13 @@ public abstract class Post {
 
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Pose pose;
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    public void updatePost(String title, String content, Pose pose) {
+    public void update(String title, String content) {
         this.title = title;
         this.content = content;
-        this.pose = pose;
         this.updatedAt = LocalDateTime.now();
     }
 }

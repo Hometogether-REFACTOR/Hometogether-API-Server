@@ -1,5 +1,6 @@
 package hometoogether.hometoogether.domain.post.domain;
 
+import hometoogether.hometoogether.domain.pose.domain.Pose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,15 +11,22 @@ import javax.persistence.*;
 
 @Getter
 @SuperBuilder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Trial extends Post {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Pose pose;
 
     private Double score;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Challenge challenge;
+
+    public void changePose(Pose pose) {
+        this.pose = pose;
+    }
 
     public void changeScore(double score) {
         this.score = score;

@@ -5,23 +5,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hometoogether.hometoogether.domain.notification.NotificationService;
 import hometoogether.hometoogether.domain.pose.domain.Pose;
 import hometoogether.hometoogether.domain.pose.domain.PoseType;
-import hometoogether.hometoogether.domain.pose.dto.KakaoPosePhotoRes;
-import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoRes;
-import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoResultReq;
-import hometoogether.hometoogether.domain.pose.dto.KakaoPoseVideoResultRes;
+import hometoogether.hometoogether.domain.pose.dto.*;
 import hometoogether.hometoogether.domain.pose.repository.PoseRepository;
 import hometoogether.hometoogether.domain.user.domain.User;
 import hometoogether.hometoogether.util.FileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
-@Transactional
+@Slf4j
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PoseService {
 
@@ -33,6 +35,7 @@ public class PoseService {
 
     private final PoseRepository poseRepository;
 
+    @Transactional
     public String uploadPose(User user, MultipartFile file) throws IOException {
 
         PoseType poseType;
@@ -50,8 +53,8 @@ public class PoseService {
                 .poseType(poseType)
                 .originalFileName(file.getOriginalFilename())
                 .s3FileName(s3FileName)
-                .user(user)
                 .build());
+        user.addPose(pose);
 
         estimatePose(pose);
 
@@ -62,6 +65,7 @@ public class PoseService {
     @Async
     @Transactional
     public void estimatePose(Pose pose) throws JsonProcessingException {
+        log.info("자세 분석 요청 시작");
         if (pose.getPoseType().equals(PoseType.PHOTO)) {
             estimatePosePhoto(pose);
         }
@@ -70,7 +74,9 @@ public class PoseService {
         }
     }
 
+    @Transactional
     public void estimatePosePhoto(Pose pose) throws JsonProcessingException {
+        log.info("이미지 분석 요청 시작");
         KakaoPosePhotoRes kakaoPosePhotoRes = kakaoService.kakaoPosePhoto(pose);
 
         // TODO: 자세 정보 저장
@@ -78,8 +84,11 @@ public class PoseService {
         pose.changePoseDetail(poseDetail);
     }
 
+    @Transactional
     public void estimatePoseVideo(Pose pose) throws JsonProcessingException {
+        log.info("동영상 분석 요청 시작");
         KakaoPoseVideoRes kakaoPoseVideoRes = kakaoService.kakaoPoseVideo(pose);
+        pose.changeJobId(kakaoPoseVideoRes.getJob_id());
 
         // TODO: 자세 분석이 완료될 때까지 폴링
         KakaoPoseVideoResultRes kakaoPoseVideoResultRes = kakaoService.kakaoPoseVideoResult(kakaoPoseVideoRes.getJob_id());
@@ -100,5 +109,12 @@ public class PoseService {
     }
 
     public void estimatePoseVideoResult(KakaoPoseVideoResultReq kakaoPoseVideoResultReq) {
+    }
+
+    public ReadPoseListRes readPoses(Pageable pageable) {
+        List<String> poseFileUrlList = new ArrayList<>();
+        poseRepository.findByUser(pageable).stream()
+                .map(p -> poseFileUrlList.add(p.getS3FileName()));
+        return new ReadPoseListRes(poseFileUrlList);
     }
 }

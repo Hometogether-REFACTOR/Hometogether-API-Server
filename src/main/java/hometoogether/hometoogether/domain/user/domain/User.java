@@ -9,12 +9,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class User {
 
-    private final String WITHDRAW_NICKNAME = "탈퇴한 유저";
     private final String DEFAULT_INTRODUCTION = "안녕하세요.";
     private final String DEFAULT_PROFILE_IMAGE_URL = "기본 이미지";
 
@@ -33,7 +32,7 @@ public class User {
 
     private String profileImageURL;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Pose> poses = new ArrayList<>();
 
     private String salt;
@@ -57,16 +56,5 @@ public class User {
         this.nickname = nickname;
         this.introduction = introduction;
         this.profileImageURL = profileImageURL;
-    }
-
-    public void deleteUser() {
-        this.username = UUID.randomUUID().toString();
-        this.password = UUID.randomUUID().toString();
-        this.nickname = WITHDRAW_NICKNAME + '_' + UUID.randomUUID();
-        this.introduction = DEFAULT_INTRODUCTION;
-        this.profileImageURL = DEFAULT_PROFILE_IMAGE_URL;
-        for (Pose pose : this.getPoses()) {
-            pose.deletePose();
-        }
     }
 }

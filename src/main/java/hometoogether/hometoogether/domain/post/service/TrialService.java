@@ -45,13 +45,14 @@ public class TrialService {
             throw new RuntimeException("자신의 Pose에 대한 챌린지만 생성할 수 있습니다.");
         }
 
-        Trial trial = trialRepository.save(Trial.builder()
+        Trial trial = Trial.builder()
                 .title(createTrialReq.getTitle())
                 .content(createTrialReq.getContent())
-                .pose(pose)
+                .challenge(challenge)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .build());
+                .build();
+        pose.addTrial(trial);
         challenge.addTrial(trial);
 
         // 자세 유사도 계산
@@ -90,14 +91,7 @@ public class TrialService {
             throw new RuntimeException("Trial을 수정할 권한이 없습니다.");
         }
 
-        Pose pose = poseRepository.findPoseById(updateTrialReq.getPoseId())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 Pose 입니다."));
-
-        if (!pose.getUser().equals(user)) {
-            throw new RuntimeException("자신의 Pose에 대한 Trial만 생성할 수 있습니다.");
-        }
-
-        trial.updatePost(updateTrialReq.getTitle(), updateTrialReq.getContent(), pose);
+        trial.update(updateTrialReq.getTitle(), updateTrialReq.getContent());
         return trial.getId();
     }
 
