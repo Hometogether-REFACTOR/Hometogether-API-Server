@@ -33,7 +33,7 @@ public abstract class Post {
 
     private LocalDateTime updatedAt;
 
-    public void update(String title, String content, Pose pose) {
+    public void updatePost(String title, String content, Pose pose) {
         this.title = title;
         this.content = content;
         this.pose = pose;

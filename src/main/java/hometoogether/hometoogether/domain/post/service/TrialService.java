@@ -45,14 +45,14 @@ public class TrialService {
             throw new RuntimeException("자신의 Pose에 대한 챌린지만 생성할 수 있습니다.");
         }
 
-        Trial trial = Trial.builder()
+        Trial trial = trialRepository.save(Trial.builder()
                 .title(createTrialReq.getTitle())
                 .content(createTrialReq.getContent())
                 .pose(pose)
-                .challenge(challenge)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .build();
+                .build());
+        challenge.addTrial(trial);
 
         // 자세 유사도 계산
         Double score;
@@ -63,7 +63,7 @@ public class TrialService {
         }
         trial.changeScore(score);
 
-        return trialRepository.save(trial).getId();
+        return trial.getId();
     }
 
     @Transactional(readOnly=true)
@@ -97,7 +97,7 @@ public class TrialService {
             throw new RuntimeException("자신의 Pose에 대한 Trial만 생성할 수 있습니다.");
         }
 
-        trial.update(updateTrialReq.getTitle(), updateTrialReq.getContent(), pose);
+        trial.updatePost(updateTrialReq.getTitle(), updateTrialReq.getContent(), pose);
         return trial.getId();
     }
 

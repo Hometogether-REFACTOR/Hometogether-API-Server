@@ -23,4 +23,8 @@ public class Trial extends Post {
     public void changeScore(double score) {
         this.score = score;
     }
+
+    public void changeChallenge(Challenge challenge) {
+        this.challenge = challenge;
+    }
 }

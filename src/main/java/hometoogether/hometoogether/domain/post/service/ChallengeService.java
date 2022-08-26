@@ -74,7 +74,7 @@ public class ChallengeService {
             throw new RuntimeException("자신의 Pose에 대한 챌린지만 생성할 수 있습니다.");
         }
 
-        challenge.update(updateChallengeReq.getTitle(), updateChallengeReq.getContent(), pose);
+        challenge.updatePost(updateChallengeReq.getTitle(), updateChallengeReq.getContent(), pose);
         return challenge.getId();
     }
 
