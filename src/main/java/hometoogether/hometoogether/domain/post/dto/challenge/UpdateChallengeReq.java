@@ -7,5 +7,4 @@ public class UpdateChallengeReq {
     private Long challengeId;
     private String title;
     private String content;
-    private Long poseId;
 }

@@ -1,16 +1,15 @@
 package hometoogether.hometoogether.domain.pose.controller;
 
+import hometoogether.hometoogether.domain.pose.dto.ReadPoseListRes;
 import hometoogether.hometoogether.util.JwtProvider;
 import hometoogether.hometoogether.domain.pose.dto.UploadPoseReq;
 import hometoogether.hometoogether.domain.pose.service.PoseService;
 import hometoogether.hometoogether.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.io.IOException;
 
 @RestController
@@ -25,5 +24,10 @@ public class PoseController {
     public ResponseEntity uploadPose(@RequestBody UploadPoseReq uploadPoseReq) throws IOException {
         User user = jwtProvider.getUserFromHeader();
         return ResponseEntity.ok(poseService.uploadPose(user, uploadPoseReq.getMultipartFile()));
+    }
+
+    @GetMapping
+    public ResponseEntity<ReadPoseListRes> readPoses(Pageable pageable) {
+        return ResponseEntity.ok(poseService.readPoses(pageable));
     }
 }

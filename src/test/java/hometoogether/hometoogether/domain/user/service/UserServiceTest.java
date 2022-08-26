@@ -136,22 +136,4 @@ class UserServiceTest {
         //then
         assertEquals("nick", readProfileRes.getNickname());
     }
-
-    @Test
-    @DisplayName("탈퇴할 수 있다.")
-    void withdraw() {
-        //given
-        User user = User.builder()
-                .username("userA")
-                .password("saltedPassword")
-                .salt("salt")
-                .nickname("nick")
-                .build();
-
-        //when
-        userService.withdraw(user, "");
-
-        //then
-        assertTrue(user.getNickname().startsWith("탈퇴한 유저"));
-    }
 }

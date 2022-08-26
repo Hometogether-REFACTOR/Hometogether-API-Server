@@ -71,7 +71,7 @@ public class UserService {
 
     @Transactional
     public Long withdraw(User user, String accessToken) {
-        user.deleteUser();
+        userRepository.delete(user);
         jwtProvider.blackListToken(user.getId(), accessToken);
         return user.getId();
     }
