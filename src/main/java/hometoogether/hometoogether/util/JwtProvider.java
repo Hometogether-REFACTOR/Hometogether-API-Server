@@ -1,6 +1,10 @@
 package hometoogether.hometoogether.util;
 
+import hometoogether.hometoogether.domain.user.domain.BlackList;
+import hometoogether.hometoogether.domain.user.domain.RefreshToken;
 import hometoogether.hometoogether.domain.user.domain.User;
+import hometoogether.hometoogether.domain.user.repository.BlackListRepository;
+import hometoogether.hometoogether.domain.user.repository.RefreshTokenRepository;
 import hometoogether.hometoogether.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +14,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.Duration;
 import java.util.Date;
 
 @Component
@@ -26,17 +29,18 @@ public class JwtProvider {
     private long accessTokenValidTime = 1000L * 60 * 60;
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24;
 
-    private RedisService redisService;
     private UserRepository userRepository;
+    private RefreshTokenRepository refreshTokenRepository;
+    private BlackListRepository blackListRepository;
 
     public String createAccessToken(Long userId) {
         return createToken(userId, accessTokenValidTime);
     }
 
     public String createRefreshToken(Long userId) {
-        String refreshToken = createToken(userId, refreshTokenValidTime);
-        redisService.setValues(userId.toString(), refreshToken, Duration.ofMillis(refreshTokenValidTime));
-        return refreshToken;
+        RefreshToken refreshToken = new RefreshToken(userId.toString(), createToken(userId, refreshTokenValidTime), refreshTokenValidTime);
+        refreshTokenRepository.save(refreshToken);
+        return refreshToken.getRefreshToken();
     }
 
     private String createToken(Long userId, Long tokenValidTime) {
@@ -50,8 +54,9 @@ public class JwtProvider {
     }
 
     public void blackListToken(Long userId, String accessToken) {
-        redisService.setValues(blackListPrefix + userId.toString(), accessToken, Duration.ofMillis(accessTokenValidTime));
-        redisService.deleteValues(userId.toString());
+        BlackList blackList = new BlackList(userId.toString(), accessToken, accessTokenValidTime);
+        refreshTokenRepository.deleteById(userId.toString());
+        blackListRepository.save(blackList);
     }
 
     public boolean validateAccessToken(String accessToken) {
@@ -72,8 +77,8 @@ public class JwtProvider {
     }
 
     public void validateRefreshToken(String userId, String refreshToken) {
-        String cachedToken = redisService.getValues(userId);
-        if (!refreshToken.equals(cachedToken)) {
+        RefreshToken cachedToken = refreshTokenRepository.findById(userId).orElseThrow(() -> new RuntimeException());
+        if (!refreshToken.equals(cachedToken.getRefreshToken())) {
             throw new RuntimeException("Refresh 토큰이 만료되었습니다.");
         }
     }
