@@ -1,5 +1,7 @@
 package hometoogether.hometoogether.config;
 
+import hometoogether.hometoogether.domain.user.domain.BlackList;
+import hometoogether.hometoogether.domain.user.domain.RefreshToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,5 +30,21 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, RefreshToken> refreshTokenRedisTemplate() {
+        RedisTemplate<String, RefreshToken> refreshTokenRedisTemplate = new RedisTemplate<>();
+        refreshTokenRedisTemplate.setConnectionFactory(redisConnectionFactory());
+        refreshTokenRedisTemplate.setEnableTransactionSupport(true);
+        return refreshTokenRedisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, BlackList> blackListRedisTemplate() {
+        RedisTemplate<String, BlackList> blackListRedisTemplate = new RedisTemplate<>();
+        blackListRedisTemplate.setConnectionFactory(redisConnectionFactory());
+        blackListRedisTemplate.setEnableTransactionSupport(true);
+        return blackListRedisTemplate;
     }
 }
