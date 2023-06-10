@@ -21,13 +21,13 @@ public class PoseController {
     private final PoseService poseService;
 
     @PostMapping
-    public ResponseEntity uploadPose(@RequestBody UploadPoseReq uploadPoseReq) throws IOException {
+    public ResponseEntity createPose(@RequestBody UploadPoseReq uploadPoseReq) throws IOException {
         User user = jwtProvider.getUserFromHeader();
-        return ResponseEntity.ok(poseService.uploadPose(user, uploadPoseReq.getMultipartFile()));
+        return ResponseEntity.ok(poseService.createPose(user, uploadPoseReq.getMultipartFile()));
     }
 
     @GetMapping
-    public ResponseEntity<ReadPoseListRes> readPoses(Pageable pageable) {
-        return ResponseEntity.ok(poseService.readPoses(pageable));
+    public ResponseEntity<ReadPoseListRes> getPoseList(Pageable pageable) {
+        return ResponseEntity.ok(poseService.getPoseList(pageable));
     }
 }

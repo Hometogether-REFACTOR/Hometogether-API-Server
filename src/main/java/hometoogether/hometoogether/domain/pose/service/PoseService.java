@@ -36,7 +36,7 @@ public class PoseService {
     private final PoseRepository poseRepository;
 
     @Transactional
-    public String uploadPose(User user, MultipartFile file) throws IOException {
+    public String createPose(User user, MultipartFile file) throws IOException {
 
         PoseType poseType;
         if (file.getContentType().startsWith("image")) {
@@ -56,7 +56,7 @@ public class PoseService {
                 .build());
         user.addPose(pose);
 
-        estimatePose(pose);
+        this.estimatePose(pose);
 
         return s3FileName;
     }
@@ -108,10 +108,7 @@ public class PoseService {
         notificationService.send(pose.getUser(), "자세 분석이 완료되었습니다.");
     }
 
-    public void estimatePoseVideoResult(KakaoPoseVideoResultReq kakaoPoseVideoResultReq) {
-    }
-
-    public ReadPoseListRes readPoses(Pageable pageable) {
+    public ReadPoseListRes getPoseList(Pageable pageable) {
         List<String> poseFileUrlList = new ArrayList<>();
         poseRepository.findByUser(pageable).stream()
                 .map(p -> poseFileUrlList.add(p.getS3FileName()));

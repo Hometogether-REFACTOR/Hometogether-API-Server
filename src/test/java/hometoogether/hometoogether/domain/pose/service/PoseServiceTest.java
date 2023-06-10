@@ -54,7 +54,7 @@ class PoseServiceTest {
         doReturn("poseDetailString").when(objectMapper).writeValueAsString(any());
 
         //when
-        poseService.uploadPose(user, multipartFile);
+        poseService.createPose(user, multipartFile);
 
         //then
         assertEquals("poseDetailString", pose.getPoseDetail());
